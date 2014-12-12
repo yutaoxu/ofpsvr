@@ -367,7 +367,7 @@ int main (int argc, const char * argv[])
   WRITELOG("Cache Size: %lf MB\n",(double)cache_size/1000000);
   cache_size_silent = 0;
 
-  //5.Statring the daemon
+  //5.Starting the daemon
   d = MHD_start_daemon(MHD_USE_THREAD_PER_CONNECTION,OFPSVR_VERSION,NULL,NULL,
                       &handler,NULL,
                       MHD_OPTION_NOTIFY_COMPLETED,request_completed,

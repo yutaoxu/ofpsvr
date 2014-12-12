@@ -100,10 +100,6 @@ struct Article
   struct Comment *comments;
   struct MHD_Response *response;
   size_t page_sz;
-  
-  //for safety
-  uint32_t last_posted_client;
-  int last_posted_client_cnt;
 };
 
 struct Article **articles;

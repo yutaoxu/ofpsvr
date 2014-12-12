@@ -264,143 +264,165 @@ struct connection_info_struct
   int parsed_article_id;
   struct Comment *comment;
   struct MHD_PostProcessor *postprocessor;
-  char *name,*email,*website,*body;
+  char *name,*email,*website,*body,*output;
   long posted_at;
   enum {BAD_FORMAT,NAME_TOO_LONG,EMAIL_TOO_LONG,WEBSITE_TOO_LONG,BODY_TOO_LONG,BLANK} error_type;
   int finished;
 };
+
+static int iterate_new_ctrl (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
+             const char *filename, const char *content_type,
+             const char *transfer_encoding, const char *data, uint64_t off,
+             size_t size)
+{
+  if(size<=0) return MHD_YES;
+  assert(coninfo_cls);
+  struct connection_info_struct *con_info = (struct connection_info_struct *) coninfo_cls;
+  assert(con_info);
+  if (0 == strcmp (key, "data"))
+  {
+    if(!append_string(&(con_info->body),data))
+      return MHD_NO;
+  }
+  else if (0 == strcmp (key, "commit"))
+  {
+    // TODO mruby
+    con_info->finished = 1;
+    con_info->output = strdup(con_info->body);
+    return MHD_NO;
+  }
+  return MHD_YES;
+}
 
 static int iterate_new_comment (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
              const char *filename, const char *content_type,
              const char *transfer_encoding, const char *data, uint64_t off,
              size_t size)
 {
-  if(size>0)
+  if(size<=0) return MHD_YES;
+  assert(coninfo_cls);
+  struct connection_info_struct *con_info = (struct connection_info_struct *) coninfo_cls;
+  assert(con_info);
+  if(0 == strcmp (key, "reply[name]"))
   {
-    assert(coninfo_cls);
-    struct connection_info_struct *con_info = (struct connection_info_struct *) coninfo_cls;
-    assert(con_info);
-    if(0 == strcmp (key, "reply[name]"))
-    {
-      if(!append_string(&(con_info->name),data))
-      {
-        return MHD_NO;
-      }
-      if(strlen(con_info->name) > 100)
-      {
-        con_info->error_type = NAME_TOO_LONG;
-        return MHD_NO;
-      }
-    }
-    else if(0 == strcmp (key, "reply[email]"))
-    {
-      if(!append_string(&(con_info->email),data))
-      {
-        return MHD_NO;
-      }
-      if(strlen(con_info->email) > 100)
-      {
-        con_info->error_type = EMAIL_TOO_LONG;
-        return MHD_NO;
-      }
-    }
-    else if(0 == strcmp (key, "reply[website]"))
-    {
-      if(!append_string(&(con_info->website),data))
-      {
-        return MHD_NO;
-      }
-      if(strlen(con_info->website) > 100)
-      {
-        con_info->error_type = WEBSITE_TOO_LONG;
-        return MHD_NO;
-      }
-    }
-    else if(0 == strcmp (key, "reply[body]"))
-    {
-      if(!append_string(&(con_info->body),data))
-      {
-        return MHD_NO;
-      }
-      if(strlen(con_info->body) > 1000)
-      {
-        con_info->error_type = BODY_TOO_LONG;
-        return MHD_NO;
-      }
-    }
-    else if (0 == strcmp (key, "commit"))
-    {
-      if(!con_info->name || !con_info->email || !con_info->body)
-      {
-        con_info->error_type = BLANK;
-        return MHD_NO;
-      }
-         
-      if(sanitize(&con_info->name) < 0) return MHD_NO;
-      if(sanitize(&con_info->email) < 0) return MHD_NO;
-      if(sanitize(&con_info->website) < 0) return MHD_NO;
-      if(sanitize(&con_info->body) < 0) return MHD_NO;
-      
-      
-      //________________store__________________
-      MYSQL mm;
-      if(!mysql_init(&mm)) return MHD_NO;
-      if(!mysql_real_connect(&mm, OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB, 0, NULL, 0)) return MHD_NO;
-      if(mysql_set_character_set(&mm, "utf8")) return MHD_NO;
-      
-      char *name_escape,*email_escape,*website_escape,*body_escape;
-      if(!(  name_escape = malloc((strlen(con_info->name)*2+10)*sizeof(char))  )) return MHD_NO;
-      if(mysql_real_escape_string(&mm,name_escape,con_info->name,strlen(con_info->name)) <= 0) return MHD_NO;
-      if(!(  email_escape = malloc((strlen(con_info->email)*2+10)*sizeof(char))  )) return MHD_NO;
-      if(mysql_real_escape_string(&mm,email_escape,con_info->email,strlen(con_info->email)) <= 0) return MHD_NO;
-      if(con_info->website)
-      {
-        if(!(  website_escape = malloc((strlen(con_info->website)*2+10)*sizeof(char))  )) return MHD_NO;
-        if(mysql_real_escape_string(&mm,website_escape,con_info->website,strlen(con_info->website)) <= 0) return MHD_NO;
-      }
-      if(!(  body_escape = malloc((strlen(con_info->body)*2+10)*sizeof(char))  )) return MHD_NO;
-      if(mysql_real_escape_string(&mm,body_escape,con_info->body,strlen(con_info->body)) <= 0) return MHD_NO;
-      
-      char *sql;
-      if(asprintf(&sql,"INSERT INTO ofpsvr_comments(`id` ,`article_id` ,`posted_at` ,`name` ,`email` ,`website` ,`body`) VALUES"
-                           "(NULL,   '%d'     ,   '%ld'    , '%s'  , '%s'   , '%s'     , '%s')",
-           con_info->parsed_article_id,con_info->posted_at,name_escape,email_escape,
-           (con_info->website)?website_escape:"",body_escape) < 0) return MHD_NO;
-      assert(name_escape);free(name_escape);
-      assert(email_escape);free(email_escape);
-      if(con_info->website){assert(website_escape);free(website_escape);}
-      assert(body_escape);free(body_escape);
-
-      if(mysql_query(&mm, sql))
-      {
-        WRITELOG("INSERT error %d: %s\n",mysql_errno(&mm),mysql_error(&mm));
-        return MHD_NO;
-      }
-      if(1!=mysql_affected_rows(&mm)) return MHD_NO;
-      assert(sql);free(sql);
-      mysql_close(&mm);
-      //_______________________________________
-      
-      
-      
-      if(!(con_info->comment->content = fill_content(con_info->name, con_info->email, con_info->website, con_info->body, con_info->posted_at, articles[con_info->parsed_article_id]->comment_count+1)))
-      {
-        return MHD_NO;
-      }
-      pthread_mutex_lock(&(articles[con_info->parsed_article_id]->comment_related_lock));
-      add_comment(articles[con_info->parsed_article_id],con_info->comment);
-      if(!regenerate(articles[con_info->parsed_article_id],con_info->parsed_article_id))
-      {
-        return MHD_NO;
-      }
-      pthread_mutex_unlock(&(articles[con_info->parsed_article_id]->comment_related_lock));
-      con_info->finished = 1;
-        return MHD_NO;
-    }
-    else
+    if(!append_string(&(con_info->name),data))
     {
       return MHD_NO;
     }
+    if(strlen(con_info->name) > 100)
+    {
+      con_info->error_type = NAME_TOO_LONG;
+      return MHD_NO;
+    }
+  }
+  else if(0 == strcmp (key, "reply[email]"))
+  {
+    if(!append_string(&(con_info->email),data))
+    {
+      return MHD_NO;
+    }
+    if(strlen(con_info->email) > 100)
+    {
+      con_info->error_type = EMAIL_TOO_LONG;
+      return MHD_NO;
+    }
+  }
+  else if(0 == strcmp (key, "reply[website]"))
+  {
+    if(!append_string(&(con_info->website),data))
+    {
+      return MHD_NO;
+    }
+    if(strlen(con_info->website) > 100)
+    {
+      con_info->error_type = WEBSITE_TOO_LONG;
+      return MHD_NO;
+    }
+  }
+  else if(0 == strcmp (key, "reply[body]"))
+  {
+    if(!append_string(&(con_info->body),data))
+    {
+      return MHD_NO;
+    }
+    if(strlen(con_info->body) > 1000)
+    {
+      con_info->error_type = BODY_TOO_LONG;
+      return MHD_NO;
+    }
+  }
+  else if (0 == strcmp (key, "commit"))
+  {
+    if(!con_info->name || !con_info->email || !con_info->body)
+    {
+      con_info->error_type = BLANK;
+      return MHD_NO;
+    }
+       
+    if(sanitize(&con_info->name) < 0) return MHD_NO;
+    if(sanitize(&con_info->email) < 0) return MHD_NO;
+    if(sanitize(&con_info->website) < 0) return MHD_NO;
+    if(sanitize(&con_info->body) < 0) return MHD_NO;
+    
+    
+    //________________store__________________
+    MYSQL mm;
+    if(!mysql_init(&mm)) return MHD_NO;
+    if(!mysql_real_connect(&mm, OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB, 0, NULL, 0)) return MHD_NO;
+    if(mysql_set_character_set(&mm, "utf8")) return MHD_NO;
+    
+    char *name_escape,*email_escape,*website_escape,*body_escape;
+    if(!(  name_escape = malloc((strlen(con_info->name)*2+10)*sizeof(char))  )) return MHD_NO;
+    if(mysql_real_escape_string(&mm,name_escape,con_info->name,strlen(con_info->name)) <= 0) return MHD_NO;
+    if(!(  email_escape = malloc((strlen(con_info->email)*2+10)*sizeof(char))  )) return MHD_NO;
+    if(mysql_real_escape_string(&mm,email_escape,con_info->email,strlen(con_info->email)) <= 0) return MHD_NO;
+    if(con_info->website)
+    {
+      if(!(  website_escape = malloc((strlen(con_info->website)*2+10)*sizeof(char))  )) return MHD_NO;
+      if(mysql_real_escape_string(&mm,website_escape,con_info->website,strlen(con_info->website)) <= 0) return MHD_NO;
+    }
+    if(!(  body_escape = malloc((strlen(con_info->body)*2+10)*sizeof(char))  )) return MHD_NO;
+    if(mysql_real_escape_string(&mm,body_escape,con_info->body,strlen(con_info->body)) <= 0) return MHD_NO;
+    
+    char *sql;
+    if(asprintf(&sql,"INSERT INTO ofpsvr_comments(`id` ,`article_id` ,`posted_at` ,`name` ,`email` ,`website` ,`body`) VALUES"
+                         "(NULL,   '%d'     ,   '%ld'    , '%s'  , '%s'   , '%s'     , '%s')",
+         con_info->parsed_article_id,con_info->posted_at,name_escape,email_escape,
+         (con_info->website)?website_escape:"",body_escape) < 0) return MHD_NO;
+    assert(name_escape);free(name_escape);
+    assert(email_escape);free(email_escape);
+    if(con_info->website){assert(website_escape);free(website_escape);}
+    assert(body_escape);free(body_escape);
+
+    if(mysql_query(&mm, sql))
+    {
+      WRITELOG("INSERT error %d: %s\n",mysql_errno(&mm),mysql_error(&mm));
+      return MHD_NO;
+    }
+    if(1!=mysql_affected_rows(&mm)) return MHD_NO;
+    assert(sql);free(sql);
+    mysql_close(&mm);
+    //_______________________________________
+    
+    
+    
+    if(!(con_info->comment->content = fill_content(con_info->name, con_info->email, con_info->website, con_info->body, con_info->posted_at, articles[con_info->parsed_article_id]->comment_count+1)))
+    {
+      return MHD_NO;
+    }
+    pthread_mutex_lock(&(articles[con_info->parsed_article_id]->comment_related_lock));
+    add_comment(articles[con_info->parsed_article_id],con_info->comment);
+    if(!regenerate(articles[con_info->parsed_article_id],con_info->parsed_article_id))
+    {
+      return MHD_NO;
+    }
+    pthread_mutex_unlock(&(articles[con_info->parsed_article_id]->comment_related_lock));
+    con_info->finished = 1;
+      return MHD_NO;
+  }
+  else
+  {
+    return MHD_NO;
   }
   return MHD_YES;
 }
@@ -533,103 +555,106 @@ int handler (void *cls, struct MHD_Connection *connection,
     }
     return OFPSVR_Q_404;
   }
-  else
-  { //POST
+  else //POST
+  { 
+    struct connection_info_struct *con_info;
     switch (slash_count)
     {
-      case 1:
-        return OFPSVR_Q_404;
-      case 2:
-        ptr = strrchr(u,'/');
-        if(!ptr) return OFPSVR_Q_404;
-        ++ptr;
-        if('b' == u[1]) // "/blog/..."
+      case 1: // '/ctrl'
+        if (NULL == *con_cls)
         {
-        }
-    }
-    if (NULL == *con_cls)
-    {
-      char *ptr = strrchr(url,'/');
-      if(!ptr) return OFPSVR_Q_404;
-      ++ptr;
-
-      int parsed_article_id;
-      if(1!=sscanf(ptr, "%d", &parsed_article_id))
-        return OFPSVR_Q_404;
-      
-      
-      //for safety
-      const union MHD_ConnectionInfo * info;
-      if((info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_CLIENT_ADDRESS)))
-      {
-        if( articles[parsed_article_id]->last_posted_client_cnt && articles[parsed_article_id]->last_posted_client == ((struct sockaddr_in*)(info->client_addr))->sin_addr.s_addr )
-        {
-          ++articles[parsed_article_id]->last_posted_client_cnt;
-          if(articles[parsed_article_id]->last_posted_client_cnt >= 4)
+          struct connection_info_struct *con_info;
+          if(!(con_info = calloc (1,sizeof (struct connection_info_struct))))
           {
-            return send_page(connection,"In order to discourage POST-robots, we don't allow 4 or more than 4 consecutive comments be posted by the same IP. Sorry.");
+            return OFPSVR_Q_500;
           }
+          if(!(con_info->postprocessor = MHD_create_post_processor (connection, POSTBUFFERSIZE, iterate_new_ctrl, (void *) con_info)))
+          {
+            free (con_info);
+            return OFPSVR_Q_500;
+          }
+          *con_cls = (void *) con_info;
+          return MHD_YES;
+        }
+        con_info = *con_cls;
+        if (*upload_data_size)
+        {
+          MHD_post_process (con_info->postprocessor, upload_data, *upload_data_size);
+          *upload_data_size = 0;
+          return MHD_YES;
+        }
+        else if (con_info->finished)
+        {
+          int ret = send_page(connection, con_info->output);
+          return ret;
         }
         else
         {
-          articles[parsed_article_id]->last_posted_client = ((struct sockaddr_in*)(info->client_addr))->sin_addr.s_addr;
-          articles[parsed_article_id]->last_posted_client_cnt = 1;
+          return OFPSVR_Q_500;
+        } 
+        break;
+      case 2: // "/blog/..."
+        if (NULL == *con_cls)
+        {
+          ptr = strrchr(url,'/');
+          if(!ptr) return OFPSVR_Q_404;
+          ++ptr;
+
+          int parsed_article_id;
+          if(1!=sscanf(ptr, "%d", &parsed_article_id))
+            return OFPSVR_Q_404;
+    
+          struct connection_info_struct *con_info;
+          if(!(con_info = calloc (1,sizeof (struct connection_info_struct))))
+          {
+            return OFPSVR_Q_500;
+          }
+          if(!(con_info->postprocessor = MHD_create_post_processor (connection, POSTBUFFERSIZE, iterate_new_comment, (void *) con_info)))
+          {
+            free (con_info);
+            return OFPSVR_Q_500;
+          }
+          con_info->parsed_article_id = parsed_article_id;
+          if(!(con_info->comment = calloc(1,sizeof(struct Comment))))
+          {
+            free (con_info);
+            return OFPSVR_Q_500;
+          }
+          con_info->posted_at = time(0);
+          *con_cls = (void *) con_info;
+          return MHD_YES;
         }
-      }
-      else
-      {
-        WRITELOG("MHD_get_connection_info failed!\n");
-      }
-      
-      
-      
-      struct connection_info_struct *con_info;
-      if(!(con_info = calloc (1,sizeof (struct connection_info_struct))))
-      {
-        return OFPSVR_Q_500;
-      }
-      if(!(con_info->postprocessor = MHD_create_post_processor (connection, POSTBUFFERSIZE, iterate_new_comment, (void *) con_info)))
-      {
-        free (con_info);
-        return OFPSVR_Q_500;
-      }
-      con_info->parsed_article_id = parsed_article_id;
-      if(!(con_info->comment = calloc(1,sizeof(struct Comment))))
-      {
-        free (con_info);
-        return OFPSVR_Q_500;
-      }
-      con_info->posted_at = time(0);
-      *con_cls = (void *) con_info;
-      return MHD_YES;
-      }
-    struct connection_info_struct *con_info = *con_cls;
-    if (*upload_data_size)
-    {
-      MHD_post_process (con_info->postprocessor, upload_data, *upload_data_size);
-      *upload_data_size = 0;
-      return MHD_YES;
-    }
-    else if (con_info->finished)
-    {
-      char *infopage;
-      asprintf(&infopage,"<html><head><meta http-equiv=\"refresh\" content=\"0;URL=/blog/%d\" /><meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\" /></head><body>评论已发表 谢谢!</body></html>",con_info->parsed_article_id,con_info->parsed_article_id);
-      int ret = send_page(connection,infopage);
-      free(infopage);
-      return ret;
-    }
-    else
-    {
-      switch(con_info->error_type)
-      {
-        case BAD_FORMAT:return send_page(connection,"BAD FORMAT");
-        case NAME_TOO_LONG:return send_page(connection,"Name too long! (Please keep its length less than 100)");
-        case EMAIL_TOO_LONG:return send_page(connection,"Email too long! (Please keep its length less than 100)");
-        case WEBSITE_TOO_LONG:return send_page(connection,"Website too long! (Please keep its length less than 100)");
-        case BODY_TOO_LONG:return send_page(connection,"Body too long! (Please keep its length less than 1000)");
-        case BLANK:return send_page(connection,"Name,Email,Body are all required fields, please don't leave any of them blank.");
-      }
-      return OFPSVR_Q_500;
+        con_info = *con_cls;
+        if (*upload_data_size)
+        {
+          MHD_post_process (con_info->postprocessor, upload_data, *upload_data_size);
+          *upload_data_size = 0;
+          return MHD_YES;
+        }
+        else if (con_info->finished)
+        {
+          char *infopage;
+          asprintf(&infopage,"<html><head><meta http-equiv=\"refresh\" content=\"0;URL=/blog/%d\" /><meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\" /></head><body>评论已发表 谢谢!</body></html>",con_info->parsed_article_id,con_info->parsed_article_id);
+          int ret = send_page(connection,infopage);
+          free(infopage);
+          return ret;
+        }
+        else
+        {
+          switch(con_info->error_type)
+          {
+            case BAD_FORMAT:return send_page(connection,"BAD FORMAT");
+            case NAME_TOO_LONG:return send_page(connection,"Name too long! (Please keep its length less than 100)");
+            case EMAIL_TOO_LONG:return send_page(connection,"Email too long! (Please keep its length less than 100)");
+            case WEBSITE_TOO_LONG:return send_page(connection,"Website too long! (Please keep its length less than 100)");
+            case BODY_TOO_LONG:return send_page(connection,"Body too long! (Please keep its length less than 1000)");
+            case BLANK:return send_page(connection,"Name,Email,Body are all required fields, please don't leave any of them blank.");
+          }
+          return OFPSVR_Q_500;
+        }
+        break;
+      default:
+        return OFPSVR_Q_404;
     }
   }
   return OFPSVR_Q_500;
@@ -650,6 +675,8 @@ void request_completed (void *cls, struct MHD_Connection *connection,
     free(con_info->website);
   if (con_info->body)
     free(con_info->body);
+  if (con_info->output)
+    free(con_info->output);
   free(con_info);
   *con_cls = NULL;
 }

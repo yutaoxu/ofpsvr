@@ -286,9 +286,28 @@ static int iterate_new_ctrl (void *coninfo_cls, enum MHD_ValueKind kind, const c
   }
   else if (0 == strcmp (key, "commit"))
   {
-    // TODO mruby
+    mrb_value obj = mrb_load_string(mrb, con_info->body);
+
+    /* did an exception occur? */
+    if (mrb->exc) {
+      // mrb_print_backtrace(mrb);
+      // obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
+      // if (mrb_string_p(obj)) {
+      //   fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stderr);
+      // }
+      // mrb->exc = 0;
+      return MHD_YES;
+    }
+    
+    obj = mrb_funcall(mrb, obj, "inspect", 0);
+    
+    if(!(con_info->output = calloc(1, RSTRING_LEN(obj))))
+    {
+      WRITELOG("calloc failed when allocating mem-space for mruby output.\n");
+      return MHD_YES;
+    }
+    memcpy(con_info->output, RSTRING_PTR(obj), RSTRING_LEN(obj));
     con_info->finished = 1;
-    con_info->output = strdup(con_info->body);
     return MHD_NO;
   }
   return MHD_YES;

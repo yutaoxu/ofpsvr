@@ -66,41 +66,44 @@
 #define OFPSVR_LOG_FILE "/var/log/ofpsvr.log"
 #include "ofpsvr/config.h"
 
-struct Comment {
-	char *content;
-	struct Comment *next;
+struct Comment
+{
+  char *content;
+  struct Comment *next;
 };
 
-struct Resource {
-	char *filename;
-	unsigned long sz;
-	struct MHD_Response *response;
-	struct Resource *next;
+struct Resource
+{
+  char *filename;
+  unsigned long sz;
+  struct MHD_Response *response;
+  struct Resource *next;
 };
 
-struct Article {
-	long posted_at;
-	char *rfc_posted_at;
-	
-	pthread_mutex_t hit_related_lock;
-	int hit_count;
-	
-	struct Resource *resources;
-	int resource_count;
-	
-	char *title;
-	char *introduction;
-	char *body;
-	
-	pthread_mutex_t comment_related_lock;
-	int comment_count;
-	struct Comment *comments;
-	struct MHD_Response *response;
-	size_t page_sz;
-	
-	//for safety
-	uint32_t last_posted_client;
-	int last_posted_client_cnt;
+struct Article
+{
+  long posted_at;
+  char *rfc_posted_at;
+  
+  pthread_mutex_t hit_related_lock;
+  int hit_count;
+  
+  struct Resource *resources;
+  int resource_count;
+  
+  char *title;
+  char *introduction;
+  char *body;
+  
+  pthread_mutex_t comment_related_lock;
+  int comment_count;
+  struct Comment *comments;
+  struct MHD_Response *response;
+  size_t page_sz;
+  
+  //for safety
+  uint32_t last_posted_client;
+  int last_posted_client_cnt;
 };
 
 struct Article **articles;
@@ -130,12 +133,14 @@ struct MHD_Response *generate_blog_response();
 struct MHD_Response *generate_blog_response_rss();
 
 int handler (void *cls, struct MHD_Connection *connection,
-			 const char *url, const char *method,
-			 const char *version, const char *upload_data,
-			 size_t *upload_data_size, void **con_cls);
+       const char *url, const char *method,
+       const char *version, const char *upload_data,
+       size_t *upload_data_size, void **con_cls);
 
 void request_completed (void *cls, struct MHD_Connection *connection,
-						void **con_cls, enum MHD_RequestTerminationCode toe);
+            void **con_cls, enum MHD_RequestTerminationCode toe);
+
+jmp_buf main_loop;
 
 #endif
 

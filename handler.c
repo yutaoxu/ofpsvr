@@ -290,13 +290,9 @@ static int iterate_new_ctrl (void *coninfo_cls, enum MHD_ValueKind kind, const c
 
     /* did an exception occur? */
     if (mrb->exc) {
-      // mrb_print_backtrace(mrb);
-      // obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
-      // if (mrb_string_p(obj)) {
-      //   fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stderr);
-      // }
-      // mrb->exc = 0;
-      return MHD_YES;
+      // obj = mrb_get_backtrace(mrb);
+      obj = mrb_obj_value(mrb->exc);
+      mrb->exc = 0;
     }
     
     obj = mrb_funcall(mrb, obj, "inspect", 0);

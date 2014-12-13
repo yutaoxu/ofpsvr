@@ -60,6 +60,7 @@
 #include <mruby.h>
 #include <mruby/compile.h>
 #include <mruby/string.h>
+#include <mruby/error.h>
 
 #define POSTBUFFERSIZE  512
 #define OFPSVR_VERSION 8901

@@ -56,6 +56,20 @@ void terminate(int sig)
 }
 int main (int argc, const char * argv[])
 {
+  // Open mruby
+  mrb = mrb_open();
+  if (!mrb)
+  {
+    WRITELOG("mrb_open() failed!\n");
+    return EXIT_FAILURE;
+  }
+  mrb_load_string(mrb, "puts 'こんにちは、世界 :-)'");
+  mrb_load_string(mrb, "puts \"いまは#{Time.now}です。\"");
+  mrb_ofpsvr = mrb_define_module(mrb, "Ofpsvr");
+  mrb_define_module_function(mrb, mrb_ofpsvr, "uid", ofpsvr_uid, MRB_ARGS_NONE());
+  mrb_define_module_function(mrb, mrb_ofpsvr, "gid", ofpsvr_gid, MRB_ARGS_NONE());
+  mrb_define_module_function(mrb, mrb_ofpsvr, "halt!", ofpsvr_halt, MRB_ARGS_NONE());
+  
   if(0!=getuid())
   {
     WRITELOG("Please be root to run this program.\n");
@@ -134,16 +148,6 @@ int main (int argc, const char * argv[])
   size_t sz;
   cache_size = 0;
   cache_size_silent = 1;
-
-  // Open Mruby
-  mrb = mrb_open();
-  if (!mrb)
-  {
-    WRITELOG("mrb_open() failed!\n");
-    return EXIT_FAILURE;
-  }
-  mrb_load_string(mrb, "puts 'こんにちは、世界 :-)'");
-  mrb_load_string(mrb, "puts \"いまは#{Time.now}です。\"");
     
   //0.Connecting DB
   printf("Connecting DB...");fflush(stdout);

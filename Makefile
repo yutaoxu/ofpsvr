@@ -1,4 +1,4 @@
-objects = build/regenerate.o build/handler.o
+objects = build/regenerate.o build/handler.o build/mrb_funcs.o
 dir_guard = @mkdir -p $(@D)
 
 all:build/ofpsvr

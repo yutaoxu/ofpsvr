@@ -118,6 +118,7 @@ int cache_size_silent;
 int running;
 
 mrb_state *mrb;
+struct RClass *mrb_ofpsvr;
 
 //Global Functions
 
@@ -138,6 +139,12 @@ int handler (void *cls, struct MHD_Connection *connection,
 void request_completed (void *cls, struct MHD_Connection *connection,
             void **con_cls, enum MHD_RequestTerminationCode toe);
 
+// mruby Functions
+mrb_value ofpsvr_uid(mrb_state *mrb, mrb_value obj);
+mrb_value ofpsvr_gid(mrb_state *mrb, mrb_value obj);
+mrb_value ofpsvr_halt(mrb_state *mrb, mrb_value obj);
+
+// Main flow control
 jmp_buf main_loop;
 
 #endif

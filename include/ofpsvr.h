@@ -143,6 +143,7 @@ void request_completed (void *cls, struct MHD_Connection *connection,
 mrb_value ofpsvr_uid(mrb_state *mrb, mrb_value obj);
 mrb_value ofpsvr_gid(mrb_state *mrb, mrb_value obj);
 mrb_value ofpsvr_halt(mrb_state *mrb, mrb_value obj);
+mrb_value ofpsvr_substantiate(mrb_state *mrb, mrb_value obj);
 
 // Main flow control
 void subsantitate();

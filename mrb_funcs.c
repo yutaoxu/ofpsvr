@@ -14,3 +14,9 @@ mrb_value ofpsvr_halt(mrb_state *mrb, mrb_value obj)
 {
   return mrb_fixnum_value(raise(SIGINT));
 }
+
+mrb_value ofpsvr_substantiate(mrb_state *mrb, mrb_value obj)
+{
+  substantiate();
+  return mrb_fixnum_value(0);
+}

@@ -101,7 +101,7 @@ void substantiate()
     free(sql);
     if(0 == mysql_affected_rows(&my))
     {
-      printf("OK but didn't change\n");
+      printf("OK but didn't change\n");fflush(stdout);
     }
     else if(mysql_affected_rows(&my) > 1)
     {
@@ -109,7 +109,7 @@ void substantiate()
     }
     else
     {
-      printf("OK\n");
+      printf("OK\n");fflush(stdout);
     }
   }
   mysql_close(&my);
@@ -129,7 +129,8 @@ int main (int argc, const char * argv[])
   mrb_define_module_function(mrb, mrb_ofpsvr, "uid", ofpsvr_uid, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, mrb_ofpsvr, "gid", ofpsvr_gid, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, mrb_ofpsvr, "halt!", ofpsvr_halt, MRB_ARGS_NONE());
-  
+  mrb_define_module_function(mrb, mrb_ofpsvr, "substantiate!", ofpsvr_substantiate, MRB_ARGS_NONE());
+
   if(0!=getuid())
   {
     WRITELOG("Please be root to run this program.\n");

@@ -145,6 +145,7 @@ mrb_value ofpsvr_gid(mrb_state *mrb, mrb_value obj);
 mrb_value ofpsvr_halt(mrb_state *mrb, mrb_value obj);
 
 // Main flow control
+void subsantitate();
 jmp_buf main_loop;
 
 #endif

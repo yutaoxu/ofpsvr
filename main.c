@@ -54,6 +54,66 @@ void terminate(int sig)
     longjmp (main_loop, 1);
   }
 }
+void substantiate()
+{
+  MYSQL my;
+  for (int i=0; i<articles_len; ++i)
+  {
+    WRITELOG("articles[%d]->hit_count = %d\n", i, articles[i]->hit_count);
+  }
+  WRITELOG("Now dumping hit_count data\n");
+  printf("Connecting DB...");fflush(stdout);
+  if(!mysql_init(&my))
+  {
+    WRITELOG("mysql_init failed!\n");
+    exit(EXIT_FAILURE);
+  }
+  if(!mysql_real_connect(&my, OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB, 0, NULL, 0))
+  {
+    WRITELOG("mysql_real_connect failed!\n");
+    if(mysql_errno(&my))
+    {
+      WRITELOG("error %d: %s\n",mysql_errno(&my),mysql_error(&my));
+    }
+    exit(EXIT_FAILURE);
+  }
+  if(mysql_set_character_set(&my, "utf8"))
+  {
+    WRITELOG("mysql_set_character_set failed!");
+    exit(EXIT_FAILURE);
+  }
+  printf("OK\n");
+  for (int i=0; i<articles_len; ++i)
+  {
+    printf("Dumping #%d...",i);fflush(stdout);
+    char *sql;
+    if(asprintf(&sql,"UPDATE ofpsvr_articles SET `hit_count` = '%d' WHERE `id`=%d LIMIT 1", articles[i]->hit_count, i) < 0)
+    {
+      WRITELOG("asprintf failed!");
+      continue;
+    }
+    if(mysql_query(&my, sql))
+    {
+      WRITELOG("UPDATE error %d: %s\n",mysql_errno(&my),mysql_error(&my));
+      free(sql);
+      continue;
+    }
+    free(sql);
+    if(0 == mysql_affected_rows(&my))
+    {
+      printf("OK but didn't change\n");
+    }
+    else if(mysql_affected_rows(&my) > 1)
+    {
+      WRITELOG("mysql_affected_rows > 1!\n");
+    }
+    else
+    {
+      printf("OK\n");
+    }
+  }
+  mysql_close(&my);
+}
 int main (int argc, const char * argv[])
 {
   // Open mruby
@@ -398,63 +458,9 @@ int main (int argc, const char * argv[])
   WRITELOG("OFPSVR.COM Server Shutting down\n");
   MHD_stop_daemon(d);
   WRITELOG("MHD Daemon stopped.\n");
-  for (i=0; i<articles_len; ++i)
-  {
-    WRITELOG("articles[%d]->hit_count = %d\n", i, articles[i]->hit_count);
-  }
-  WRITELOG("Now dumping hit_count data\n");
-  printf("Connecting DB...");fflush(stdout);
-  if(!mysql_init(&my))
-  {
-    WRITELOG("mysql_init failed!\n");
-    return EXIT_FAILURE;
-  }
-  if(!mysql_real_connect(&my, OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB, 0, NULL, 0))
-  {
-    WRITELOG("mysql_real_connect failed!\n");
-    if(mysql_errno(&my))
-    {
-      WRITELOG("error %d: %s\n",mysql_errno(&my),mysql_error(&my));
-    }
-    return EXIT_FAILURE;
-  }
-  if(mysql_set_character_set(&my, "utf8"))
-  {
-    WRITELOG("mysql_set_character_set failed!");
-    return EXIT_FAILURE;
-  }
-  printf("OK\n");
-  for (i=0; i<articles_len; ++i)
-  {
-    printf("Dumping #%d...",i);fflush(stdout);
-    char *sql;
-    if(asprintf(&sql,"UPDATE ofpsvr_articles SET `hit_count` = '%d' WHERE `id`=%d LIMIT 1", articles[i]->hit_count, i) < 0)
-    {
-      WRITELOG("asprintf failed!");
-      continue;
-    }
-    if(mysql_query(&my, sql))
-    {
-      WRITELOG("UPDATE error %d: %s\n",mysql_errno(&my),mysql_error(&my));
-      free(sql);
-      continue;
-    }
-    free(sql);
-    if(0 == mysql_affected_rows(&my))
-    {
-      printf("OK but didn't change\n");
-    }
-    else if(mysql_affected_rows(&my) > 1)
-    {
-      WRITELOG("mysql_affected_rows > 1!\n");
-    }
-    else
-    {
-      printf("OK\n");
-    }
-  }
-  mysql_close(&my);
 
+  substantiate();
+  
   // Close Mruby
   mrb_load_string(mrb, "puts \"こんばんは！\"");
   mrb_close(mrb);

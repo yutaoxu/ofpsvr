@@ -106,23 +106,27 @@ struct Article
   size_t page_sz;
 };
 
-struct Article **articles;
-unsigned long articles_len;
+// *** Global Variables ***
 
-struct Resource *resources;
+extern struct Article **articles;
+extern int articles_len;
 
-struct MHD_Response *response_404;
-struct MHD_Response *response_500;
-struct MHD_Response *response_index;
+extern struct Resource *resources;
 
-unsigned long cache_size;
-int cache_size_silent;
-int running;
+extern struct MHD_Response *response_404;
+extern struct MHD_Response *response_500;
+extern struct MHD_Response *response_index;
 
-mrb_state *mrb;
-struct RClass *mrb_ofpsvr;
+extern unsigned long cache_size;
+extern int cache_size_silent;
+extern int running;
 
-//Global Functions
+extern mrb_state *mrb;
+extern struct RClass *mrb_ofpsvr;
+
+extern jmp_buf main_loop;
+
+// *** Global Functions ***
 
 void add_comment(struct Article *a,struct Comment *c);
 
@@ -148,11 +152,10 @@ mrb_value ofpsvr_halt(mrb_state *mrb, mrb_value obj);
 mrb_value ofpsvr_substantiate(mrb_state *mrb, mrb_value obj);
 
 // Main flow control
-void subsantitate();
+void terminate();
+void substantiate();
 
 MYSQL *ofpsvr_real_connect(MYSQL *mysql);
-
-jmp_buf main_loop;
 
 #endif
 

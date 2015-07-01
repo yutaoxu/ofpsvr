@@ -233,7 +233,7 @@ int regenerate(struct Article *x,int id)
     ++cnt;
     old = page;
     char *ptr = strrchr(resource_ptr->filename,'.');
-    if(asprintf(&page, "%s<tr><td>%d#</td><td><a class=\"%s\" href=\"/blog/%d/resources/%s\">%s</a></td><td>%d KB</td></tr>", old, cnt, ptr?(ptr+1):"no_ext", id, resource_ptr->filename, resource_ptr->filename, resource_ptr->sz/1000) < 0){return 0;}
+    if(asprintf(&page, "%s<tr><td>%d#</td><td><a class=\"%s\" href=\"/blog/%d/resources/%s\">%s</a></td><td>%lu KB</td></tr>", old, cnt, ptr?(ptr+1):"no_ext", id, resource_ptr->filename, resource_ptr->filename, resource_ptr->sz/1000) < 0){return 0;}
     assert(old);free(old);
   }
   old = page;

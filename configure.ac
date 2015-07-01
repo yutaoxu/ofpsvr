@@ -44,6 +44,12 @@ AC_CHECK_HEADER(
       cf. https://www.gnu.org/software/libmicrohttpd/])
   ])
 AC_CHECK_HEADER(
+  [openssl/md5.h], ,
+  [
+    AC_MSG_ERROR([Please install OpenSSL;
+      cf. https://www.openssl.org/])
+  ])
+AC_CHECK_HEADER(
   [check.h], ,
   [
     AC_MSG_ERROR([Please install check;
@@ -54,6 +60,7 @@ AC_CHECK_HEADER(
 AC_CHECK_LIB([microhttpd], [MHD_queue_response])
 AC_CHECK_LIB([mysqlclient], [mysql_init])
 AC_CHECK_LIB([pthread], [pthread_mutex_init])
+AC_CHECK_LIB([crypto], [MD5])
 AC_CHECK_LIB([check], [srunner_run_all])
 
 # Checks for typedefs, structures, and compiler characteristics.

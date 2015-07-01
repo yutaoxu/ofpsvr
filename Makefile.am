@@ -9,15 +9,15 @@ AM_CFLAGS              = -I$(top_srcdir)/include                              \
 include_HEADERS        = include/ofpsvr.h
 
 lib_LTLIBRARIES        = libofpsvr.la
-libofpsvr_la_LDFLAGS   = -no-undefined
 libofpsvr_la_CFLAGS    = $(AM_CFLAGS) $(GCOV_CFLAGS)
 libofpsvr_la_SOURCES   = handler.c                                            \
-                         main.c                                               \
                          mrb_funcs.c                                          \
+                         utils.c                                              \
                          regenerate.c
 
 bin_PROGRAMS           = ofpsvr
-ofpsvr_LDADD           = libofpsvr.la
+ofpsvr_LDADD           = libofpsvr.la                                         \
+                         $(top_srcdir)/deps/mruby/build/host/lib/libmruby.a
 ofpsvr_SOURCES         = main.c
 
 TESTS                  = test/run

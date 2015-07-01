@@ -461,7 +461,7 @@ int handler (void *cls, struct MHD_Connection *connection,
 
   int slash_count = 0;
   ptr = u;
-  while(ptr = strchr(ptr,'/'))
+  while((ptr = strchr(ptr,'/')))
     ++slash_count,++ptr;
 
   char *extension = NULL;
@@ -519,7 +519,7 @@ int handler (void *cls, struct MHD_Connection *connection,
           int parsed_article_id;
           if(1!=sscanf(ptr, "%d", &parsed_article_id))
             return OFPSVR_Q_404;
-          if(parsed_article_id>=0 && parsed_article_id<articles_len)
+          if(parsed_article_id>=0 && parsed_article_id < articles_len)
           {
             pthread_mutex_lock(&(articles[parsed_article_id]->hit_related_lock));
             ++articles[parsed_article_id]->hit_count;
@@ -556,7 +556,7 @@ int handler (void *cls, struct MHD_Connection *connection,
         int parsed_article_id;
         if(1!=sscanf(ptr_another, "%d", &parsed_article_id))
           return OFPSVR_Q_404;
-        if(!(parsed_article_id>=0 && parsed_article_id<articles_len))
+        if(!(parsed_article_id>=0 && parsed_article_id < articles_len))
           return OFPSVR_Q_404;
   
         struct Resource *resource_ptr;
@@ -651,7 +651,7 @@ int handler (void *cls, struct MHD_Connection *connection,
         else if (con_info->finished)
         {
           char *infopage;
-          asprintf(&infopage,"<html><head><meta http-equiv=\"refresh\" content=\"0;URL=/blog/%d\" /><meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\" /></head><body>评论已发表 谢谢!</body></html>",con_info->parsed_article_id,con_info->parsed_article_id);
+          asprintf(&infopage,"<html><head><meta http-equiv=\"refresh\" content=\"0;URL=/blog/%d\" /><meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\" /></head><body>评论已发表 谢谢!</body></html>",con_info->parsed_article_id);
           int ret = send_page(connection,infopage);
           free(infopage);
           return ret;

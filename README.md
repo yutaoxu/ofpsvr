@@ -25,7 +25,14 @@ sudo apt-get install libmicrohttpd-dev
 sudo apt-get install libssl-dev
 ```
 
-最后执行：
+先进入 deps/mruby 目录编译 mruby 依赖包：
+
+```sh
+cd deps/mruby
+./minirake
+```
+
+回到主目录，执行：
 
 ```sh
 sh autogen.sh

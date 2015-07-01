@@ -48,6 +48,21 @@ static char *utime2rfctime(long u)
   assert(buffer);
   return buffer;
 }
+
+MYSQL *ofpsvr_real_connect(MYSQL *mysql)
+{
+        char *host = getenv("OFPSVR_DB_HOST");
+        char *user = getenv("OFPSVR_DB_USER");
+        char *passwd = getenv("OFPSVR_DB_PASSWD");
+        char *db = getenv("OFPSVR_DB_DB");
+        if (!host || !user || !passwd || !db){
+                WRITELOG("Please set these environment variables:
+OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB\n");
+                exit(EXIT_FAILURE);
+        }
+        return mysql_real_connect(mysql, host, user, passwd, db, 0, NULL, 0);
+}
+
 void terminate(int sig)
 {
   if(running)
@@ -70,7 +85,7 @@ void substantiate()
     WRITELOG("mysql_init failed!\n");
     exit(EXIT_FAILURE);
   }
-  if(!mysql_real_connect(&my, OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB, 0, NULL, 0))
+  if(!ofpsvr_real_connect(&my))
   {
     WRITELOG("mysql_real_connect failed!\n");
     if(mysql_errno(&my))
@@ -201,9 +216,9 @@ int main (int argc, const char * argv[])
   close(STDERR_FILENO);
   
   WRITELOG("______________OFPSVR.COM______Server______________\n");
-  WRITELOG("Version %d;\n",OFPSVR_VERSION);
-  WRITELOG("Linked with libmicrohttpd version %x;\n",MHD_VERSION);
-  WRITELOG("Written by P.S.V.R of snailize team.\n");
+  WRITELOG("Version %d\n",OFPSVR_VERSION);
+  WRITELOG("Linked with libmicrohttpd version %x\n",MHD_VERSION);
+  WRITELOG("Written by P.S.V.R\n");
   WRITELOG("__________________________________________________\n\n");
   
   MYSQL my;
@@ -219,7 +234,7 @@ int main (int argc, const char * argv[])
     WRITELOG("mysql_init failed!\n");
     return EXIT_FAILURE;
   }
-  if(!mysql_real_connect(&my, OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB, 0, NULL, 0))
+  if(!ofpsvr_real_connect(&my))
   {
     WRITELOG("mysql_real_connect failed!\n");
     if(mysql_errno(&my))

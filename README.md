@@ -10,12 +10,12 @@
  
 ## 编译
 
-必备系统组件：
+必要的系统组件：
 
- * [Autoconf](http://www.gnu.org/software/autoconf/autoconf.html), [Automake](http://www.gnu.org/software/automake/), [GNU Libtool](http://www.gnu.org/software/libtool/)
- * [MySQL Connector/C (libmysqlclient)](https://dev.mysql.com/downloads/connector/c)
- * [GNU Libmicrohttpd](https://www.gnu.org/software/libmicrohttpd/)
- * [Check](http://check.sourceforge.net/)
+* [MySQL Connector/C (libmysqlclient)](https://dev.mysql.com/downloads/connector/c)
+* [GNU Libmicrohttpd](https://www.gnu.org/software/libmicrohttpd/)
+* [Check](http://check.sourceforge.net/)
+* [Autoconf](http://www.gnu.org/software/autoconf/autoconf.html), [Automake](http://www.gnu.org/software/automake/), [GNU Libtool](http://www.gnu.org/software/libtool/)
 
 （参考）Ubuntu 用户可通过以下命令安装这些系统组件：
 
@@ -41,6 +41,19 @@ make
 make check
 sudo make install
 ```
+
+## 运行
+
+运行之前请确保正确设置以下环境变量：
+ 
+* `OFPSVR_DB_HOST`   - MySQL 主机
+* `OFPSVR_DB_USER`   - MySQL 用户
+* `OFPSVR_DB_PASSWD` - MySQL 密码
+* `OFPSVR_DB_DB`     - MySQL 数据库名
+
+在这些环境变量之下用根用户执行 `ofpsvr` 即可，例如
+
+    OFPSVR_DB_HOST=127.0.0.1 OFPSVR_DB_USER=user1 OFPSVR_DB_PASSWD=secret OFPSVR_DB_DB=ofpsvr sudo ofpsvr
 
 ## 代码风格
 

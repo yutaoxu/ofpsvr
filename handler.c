@@ -385,7 +385,7 @@ static int iterate_new_comment (void *coninfo_cls, enum MHD_ValueKind kind, cons
     //________________store__________________
     MYSQL mm;
     if(!mysql_init(&mm)) return MHD_NO;
-    if(!mysql_real_connect(&mm, OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB, 0, NULL, 0)) return MHD_NO;
+    if(!ofpsvr_real_connect(&mm)) return MHD_NO;
     if(mysql_set_character_set(&mm, "utf8")) return MHD_NO;
     
     char *name_escape,*email_escape,*website_escape,*body_escape;

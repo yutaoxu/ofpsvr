@@ -66,10 +66,9 @@
 #include <mruby/error.h>
 
 #define POSTBUFFERSIZE  512
-#define OFPSVR_VERSION 8901
+#define OFPSVR_VERSION  8902
 #define OFPSVR_PID_FILE "/var/run/ofpsvr.pid"
 #define OFPSVR_LOG_FILE "/var/log/ofpsvr.log"
-#include "ofpsvr/config.h"
 
 struct Comment
 {
@@ -150,6 +149,9 @@ mrb_value ofpsvr_substantiate(mrb_state *mrb, mrb_value obj);
 
 // Main flow control
 void subsantitate();
+
+MYSQL *ofpsvr_real_connect(MYSQL *mysql);
+
 jmp_buf main_loop;
 
 #endif

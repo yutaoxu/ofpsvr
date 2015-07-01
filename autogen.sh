@@ -20,7 +20,6 @@ if [ "$LIBTOOLIZE" = "" ] && [ "`uname`" = "Darwin" ]; then
   LIBTOOLIZE=glibtoolize
 fi
 
-AUTOSCAN=${AUTOSCAN:-autoscan}
 ACLOCAL=${ACLOCAL:-aclocal}
 AUTOCONF=${AUTOCONF:-autoconf}
 AUTOHEADER=${AUTOHEADER:-autoheader}
@@ -43,7 +42,6 @@ echo "m4_define([OFPSVR_EXTRA_AUTOMAKE_FLAGS], [$OFPSVR_EXTRA_AUTOMAKE_FLAGS])" 
 
 set -ex
 "$LIBTOOLIZE"
-"$AUTOSCAN"
 "$ACLOCAL" -I m4
 "$AUTOCONF"
 "$AUTOHEADER"

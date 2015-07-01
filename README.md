@@ -53,7 +53,7 @@ sudo make install
 
 在这些环境变量之下用根用户执行 `ofpsvr` 即可，例如
 
-    OFPSVR_DB_HOST=127.0.0.1 OFPSVR_DB_USER=user1 OFPSVR_DB_PASSWD=secret OFPSVR_DB_DB=ofpsvr sudo ofpsvr
+    sudo OFPSVR_DB_HOST=127.0.0.1 OFPSVR_DB_USER=user1 OFPSVR_DB_PASSWD=secret OFPSVR_DB_DB=ofpsvr ofpsvr
 
 ## 代码风格
 

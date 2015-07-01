@@ -85,8 +85,8 @@ int main (int argc, const char * argv[])
     WRITELOG("mrb_open() failed!\n");
     return EXIT_FAILURE;
   }
-  mrb_load_string(mrb, "puts 'こんにちは、世界 :-)'");
-  mrb_load_string(mrb, "puts \"いまは#{Time.now}です。\"");
+  mrb_load_string(mrb, "puts 'こんにちは、mruby! :-)'");
+  mrb_load_string(mrb, "puts \"いまは #{Time.now} です。\"");
   mrb_ofpsvr = mrb_define_module(mrb, "Ofpsvr");
   mrb_define_module_function(mrb, mrb_ofpsvr, "uid", ofpsvr_uid, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, mrb_ofpsvr, "gid", ofpsvr_gid, MRB_ARGS_NONE());
@@ -160,7 +160,7 @@ int main (int argc, const char * argv[])
   }
   close(STDERR_FILENO);
   
-  WRITELOG("______________OFPSVR.COM______Server______________\n");
+  WRITELOG("___________________OFPSVR.COM_____________________\n");
   WRITELOG("Version %d\n",OFPSVR_VERSION);
   WRITELOG("Linked with libmicrohttpd version %x\n",MHD_VERSION);
   WRITELOG("Written by P.S.V.R\n");

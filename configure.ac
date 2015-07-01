@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.68])
 AC_INIT(
-  [OF P.S.V.R], [0.2], [pmq2001@gmail.com], [ofpsvr],
+  [OF P.S.V.R], [8.9.0.2], [pmq2001@gmail.com], [ofpsvr],
   [https://github.com/pmq20/ofpsvr])
 AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/headers.m4])
@@ -29,22 +29,35 @@ AM_PROG_CC_C_O
 LT_INIT
 
 # Checks for header files.
-AC_CHECK_HEADERS([limits.h stddef.h stdint.h stdlib.h string.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h netdb.h netinet/in.h stddef.h stdint.h  \
+                  stdlib.h string.h sys/socket.h sys/time.h unistd.h])
 AC_CHECK_HEADER(
-  [mruby.h], ,
+  [mysql/mysql.h], ,
   [
-    AC_MSG_ERROR([Please install mruby; cf. http://www.mruby.org/])
+    AC_MSG_ERROR([Please install MySQL Connector/C (libmysqlclient);
+      cf. https://dev.mysql.com/downloads/connector/c])
+  ])
+AC_CHECK_HEADER(
+  [microhttpd.h], ,
+  [
+    AC_MSG_ERROR([Please install GNU Libmicrohttpd;
+      cf. https://www.gnu.org/software/libmicrohttpd/])
   ])
 AC_CHECK_HEADER(
   [check.h], ,
   [
-    AC_MSG_ERROR([Please install check; cf. http://check.sourceforge.net/])
+    AC_MSG_ERROR([Please install check;
+      cf. http://check.sourceforge.net/])
   ])
 
 # Checks for libraries.
-AC_SEARCH_LIBS([uv_run], [uv])
+AC_CHECK_LIB([microhttpd], [MHD_queue_response])
+AC_CHECK_LIB([mysqlclient], [mysql_init])
+AC_CHECK_LIB([pthread], [pthread_mutex_init])
+AC_CHECK_LIB([check], [srunner_run_all])
 
 # Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_PID_T
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_INT16_T
 AC_TYPE_INT32_T
@@ -59,7 +72,8 @@ AC_TYPE_UINT8_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
-AC_CHECK_FUNCS([memchr memset strtoul])
+AC_FUNC_FORK
+AC_CHECK_FUNCS([strchr strdup strrchr strstr])
 
 # Adding Options
 AC_ARG_WITH([gcov],

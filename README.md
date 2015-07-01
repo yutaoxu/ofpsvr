@@ -1,49 +1,38 @@
-![OF P.S.V.R](https://raw.githubusercontent.com/pmq20/ofpsvr/master/public/img/index.png)
- 
-P.S.V.R 的软件实验室
+<p align="center"><img src="https://raw.githubusercontent.com/pmq20/ofpsvr/master/public/img/index.png" /></p>
 
-http://www.ofpsvr.com
+<p align="center">P.S.V.R 的软件实验室</p>
+
+<p align="center">http://www.ofpsvr.com</p>
  
 ## 状态
- 
+
 [![持续集成状态](https://travis-ci.org/pmq20/ofpsvr.svg?branch=master)](https://travis-ci.org/pmq20/ofpsvr)
  
 ## 编译
 
-系统必备组件（仅 UNIX 系统）：
+必备系统组件：
 
- * GCC 4.2 或以上
- * G++ 4.2 或以上
- * Python 2.6 或 2.7
- * GNU Make 3.81 或以上
- * libexecinfo (仅 FreeBSD and OpenBSD 系统)
+ * [Autoconf](http://www.gnu.org/software/autoconf/autoconf.html), [Automake](http://www.gnu.org/software/automake/), [GNU Libtool](http://www.gnu.org/software/libtool/)
+ * [MySQL Connector/C (libmysqlclient)](https://dev.mysql.com/downloads/connector/c)
+ * [GNU Libmicrohttpd](https://www.gnu.org/software/libmicrohttpd/)
+ * [Check](http://check.sourceforge.net/)
 
-请在 Unix / Macintosh 系统上执行：
+（参考）Ubuntu 用户可通过以下命令安装这些系统组件：
 
 ```sh
+sudo apt-get install libmysqlclient-dev
+sudo apt-get install libmicrohttpd-dev
+sudo apt-get install libssl-dev
+```
+
+最后执行：
+
+```sh
+sh autogen.sh
 ./configure
 make
-make install
-```
-
-如果您的 python 二进制文件存放在了非标准的位置，或有着非标准的名称，请使用以下替代脚本：
-
-```sh
-export PYTHON=/path/to/python
-$PYTHON ./configure
-make
-make install
-```
-
-系统必备组件（仅 Windows 系统）：
-
- * Python 2.6 or 2.7
- * Visual Studio 2010 or 2012
-
-请在 Windows 系统上执行:
-
-```sh
-vcbuild nosign
+make check
+sudo make install
 ```
 
 ## 代码风格

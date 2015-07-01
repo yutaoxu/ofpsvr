@@ -1,0 +1,30 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    background-image: url(../img/indexbg.gif);
+    overflow: hidden;
+}
+img {
+    border: 0 none;
+    behavior: url(iepngfix.htc);
+}
+div.i {
+    height: 610px;
+    left: 50%;
+    margin: -305px 0 0 -373px;
+    position: absolute;
+    top: 50%;
+    width: 746px;
+}
+p {
+    font-family: "Bitstream Charter", "URW Palladio L", Palatino, "Palatino Linotype", "Hoefler Text", Georgia, "Book Antiqua", Times, "Times New Roman", serif;
+    font-size: 16px;
+    margin-top: -48px;
+    text-align: center;
+}
+a {
+    color: #000000;
+    text-decoration: none;
+}

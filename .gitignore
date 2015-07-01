@@ -1,5 +1,4 @@
 # Object files
-build/
 *.o
 *.ko
 *.obj
@@ -28,9 +27,55 @@ build/
 *.i*86
 *.x86_64
 *.hex
-
+ 
 # Sensitive files
-include/ofpsvr/config.h
+/include/ofpsvr/config.h
 
 # Mac OS X
 .DS_Store
+
+# Autotools
+.dirstamp
+.deps/
+.libs/
+/autom4te.cache/
+/configure.scan
+/config.h
+/Makefile
+/Makefile.in
+/aclocal.m4
+/stamp-h1
+/config.status
+/compile
+/configure
+/depcomp
+/install-sh
+/missing
+/ltmain.sh
+/config.h.in
+/test-driver
+/ar-lib
+/config.guess
+/config.sub
+/m4/libtool.m4
+/m4/ltoptions.m4
+/m4/ltsugar.m4
+/m4/ltversion.m4
+/m4/lt~obsolete.m4
+/m4/ofpsvr_gitignore.m4
+/libtool
+*.tar.gz
+
+# gcov / lcov
+*.gcda
+*.gcno
+/coverage.info
+
+# Miscellaneous
+*.log
+*~
+
+# FIXME builds
+ofpsvr
+test/run
+test/run.trs

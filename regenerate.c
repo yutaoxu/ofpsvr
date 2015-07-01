@@ -1,28 +1,30 @@
 /*
- *      regenerate.c
- *      
- *      Copyright 2011 P.S.V.R <ofpsvr.com>
- *      
- *      This program is free software; you can redistribute it and/or modify
- *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation; either version 2 of the License, or
- *      (at your option) any later version.
- *      
- *      This program is distributed in the hope that it will be useful,
- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *      GNU General Public License for more details.
- *      
- *      You should have received a copy of the GNU General Public License
- *      along with this program; if not, write to the Free Software
- *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- *      MA 02110-1301, USA.
+ * OF P.S.V.R
+ * Copyright (c) 2015 P.S.V.R
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
-
 
 #include "ofpsvr.h"
 #include <openssl/md5.h>
+
 #define OFPSVR_HEADER1 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"\
              "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">"\
              "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" >"\
@@ -57,7 +59,6 @@
              "<td id=\"sidebar\"><ul>"\
              "<li><h2>About</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"http://www.gravatar.com/avatar/8002c84eb4c18170632f8fb7efb09288\" />Hello, I'm <strong>P.S.V.R</strong>, Living in happiness with <a href=\"http://insoeg.com/\"><strong>Insoeg</strong></a>.<br>[ <a href=\"http://ofpsvr.org/\">Home</a> ]<br style=\"clear:both\" /><strong>A.K.A.'s</strong>:Pan 平底锅 试管牛<br /><strong>Derivatives</strong>:平底牛 试管锅 事故按钮 ...</div></li>"\
              "<li><h2>Subscribe</h2><div class=\"body\"><a href=\"/blog.xml\"><img id=\"rss\" alt=\"rss\" width=\"200\" height=\"173\" src=\"/resources/rss.png\" /></a></div></li>"\
-             "<li><h2>Friends</h2><div class=\"body\"><ul><li><a href=\"http://longyi.li/\">Longyi</a>, since 2013</li><li>张家雨, since 2009</li><li><a href=\"http://www.zrapton.com/\">ZaviOr</a>, since 2007</li><li><a href=\"http://www.marisai.com/\">サイコ</a>, since 2006</li><li><a href=\"http://sazz.info/\">Sounder</a>, since 2004</li><li><a href=\"http://www.sishuixie.com/\">Qiankjz</a>, since 2003</li><li><a href=\"http://github.com/llb0536\">Liber</a>, since 2002</li><li><a href=\"http://weibo.com/lxj1234\">Linz</a>, since 2002</li></ul></div></li>"\
              "<li><h2>Contact</h2><div class=\"body\"><ul><li><img alt=\"address\" src=\"/resources/email.png\" /></li></ul></div></li>"\
              "</ul></td>"\
              "<!-- ======Content====== -->"\
@@ -78,7 +79,7 @@
               "<rss version=\"2.0\">"\
               "<channel>"\
               "<title>Blog Of P.S.V.R</title>"\
-              "<link>http://ofpsvr.com/blog</link>"\
+              "<link>http://www.ofpsvr.com/blog</link>"\
               "<description>Blog Of P.S.V.R</description>"\
               "<language>zh-cn</language>"\
               "<docs>http://blogs.law.harvard.edu/tech/rss</docs>"\

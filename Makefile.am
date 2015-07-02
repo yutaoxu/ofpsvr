@@ -13,6 +13,7 @@ libofpsvr_la_CFLAGS    = $(AM_CFLAGS) $(GCOV_CFLAGS)
 libofpsvr_la_SOURCES   = handler.c                                            \
                          mrb_funcs.c                                          \
                          utils.c                                              \
+                         errors.c                                             \
                          regenerate.c
 
 bin_PROGRAMS           = ofpsvr

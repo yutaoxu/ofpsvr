@@ -1,0 +1,33 @@
+language: c
+
+os:
+  - linux
+  - osx
+
+compiler:
+  - clang
+  - gcc
+
+before_install:
+  - if [ $TRAVIS_OS_NAME = linux ]; then
+      sudo apt-get install -y check lcov;
+    elif [ $TRAVIS_OS_NAME = osx ]; then
+      brew install check lcov;
+    fi
+  - gem install coveralls-lcov
+  - cd $TRAVIS_BUILD_DIR/deps/mruby
+  - ./minirake
+  - cd $TRAVIS_BUILD_DIR
+
+script:
+  - sh autogen.sh
+  - ./configure --with-gcov
+  - make
+  - make check
+
+after_success:
+  - if [ $CC = clang ]; then
+      lcov --compat-libtool --directory . --capture --output-file coverage.info;
+      sed -i.bak 's/ofpsvr\/test\/test/ofpsvr\/test/g' coverage.info;
+      coveralls-lcov coverage.info;
+    fi

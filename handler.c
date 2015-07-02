@@ -24,6 +24,22 @@
 
 #include "ofpsvr.h"
 
+struct Article **articles;
+int articles_len;
+
+struct Resource *resources;
+
+struct MHD_Response *response_404;
+struct MHD_Response *response_500;
+struct MHD_Response *response_index;
+
+unsigned long cache_size;
+int cache_size_silent;
+int running;
+
+mrb_state *mrb;
+struct RClass *mrb_ofpsvr;
+
 #define OFPSVR_Q_404 MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response_404)
 #define OFPSVR_Q_500 MHD_queue_response(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, response_500)
 

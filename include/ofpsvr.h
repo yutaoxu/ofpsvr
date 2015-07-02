@@ -70,6 +70,10 @@
 #define OFPSVR_PID_FILE "/var/run/ofpsvr.pid"
 #define OFPSVR_LOG_FILE "/var/log/ofpsvr.log"
 
+#define OFPSVR_ERRNO_MAP(XX)                                                  \
+        XX(-1, "malloc() failed, probably due to memory insufficiency")       \
+        XX(-2, "a crucial libuv call failed")
+
 struct Comment
 {
   char *content;
@@ -124,8 +128,6 @@ extern int running;
 extern mrb_state *mrb;
 extern struct RClass *mrb_ofpsvr;
 
-extern jmp_buf main_loop;
-
 // *** Global Functions ***
 
 void add_comment(struct Article *a,struct Comment *c);
@@ -156,6 +158,10 @@ void terminate();
 void substantiate();
 
 MYSQL *ofpsvr_real_connect(MYSQL *mysql);
+
+/* error */
+void ofpsvr_fatal(int errono);
+void ofpsvr_location_stderr(const char* file, int line);
 
 #endif
 

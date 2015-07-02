@@ -12,17 +12,19 @@
 
 必要的系统组件：
 
+* [Autoconf](http://www.gnu.org/software/autoconf/autoconf.html) / [Automake](http://www.gnu.org/software/automake/) / [GNU Libtool](http://www.gnu.org/software/libtool/)
 * [MySQL Connector/C (libmysqlclient)](https://dev.mysql.com/downloads/connector/c)
 * [GNU Libmicrohttpd](https://www.gnu.org/software/libmicrohttpd/)
-* [Check](http://check.sourceforge.net/)
-* [Autoconf](http://www.gnu.org/software/autoconf/autoconf.html), [Automake](http://www.gnu.org/software/automake/), [GNU Libtool](http://www.gnu.org/software/libtool/)
+* [OpenSSL](https://www.openssl.org/)
+* [Check](http://check.sourceforge.net/) 与 [LCOV](http://ltp.sourceforge.net/coverage/lcov.php)
 
-（参考）Ubuntu 用户可通过以下命令安装这些系统组件：
+作为参考，Ubuntu 用户可通过以下命令安装这些系统组件：
 
 ```sh
 sudo apt-get install libmysqlclient-dev
 sudo apt-get install libmicrohttpd-dev
 sudo apt-get install libssl-dev
+sudo apt-get install check lcov
 ```
 
 先进入 deps/mruby 目录编译 mruby 依赖包：

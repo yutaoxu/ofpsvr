@@ -25,9 +25,30 @@
 #ifndef OFPSVR_H_ICWCQ40G
 #define OFPSVR_H_ICWCQ40G
 
-#define NDEBUG
-#define WRITELOG(...) printf("{%d} ",(int)time(0));printf(__VA_ARGS__);fflush(stdout);
+#define _GNU_SOURCE
+/* Get a clean slate of DBEUG macros */
+#undef ENABLE_DEBUG
+#undef DISABLE_DEBUG
+#undef MRB_DEBUG
+#undef NDEBUG
+#undef HTTP_PARSER_STRICT
 
+#ifdef OFPSVR_DEBUG
+#define ENABLE_DEBUG
+#define MRB_DEBUG
+#define HTTP_PARSER_STRICT 1
+#else
+#define NDEBUG
+#define DISABLE_DEBUG
+#define HTTP_PARSER_STRICT 0
+#endif /* end of #ifdef OFPSVR_DEBUG */
+
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#define snprintf c99_snprintf
+#endif
+
+#define WRITELOG(...) printf("{%d} ",(int)time(0));printf(__VA_ARGS__);fflush(stdout);
 
 #include <pthread.h>
 #include <stdio.h>

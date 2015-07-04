@@ -24,6 +24,7 @@
 作为参考，Ubuntu 用户可通过以下命令安装这些系统组件：
 
 ```sh
+sudo apt-get install libtool autoconf automake
 sudo apt-get install libmysqlclient-dev
 sudo apt-get install libmicrohttpd-dev
 sudo apt-get install libssl-dev

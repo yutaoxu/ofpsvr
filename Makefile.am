@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS        = -I m4
 AM_CFLAGS              = -I$(top_srcdir)/include                              \
                          -I$(top_srcdir)/deps/mruby/include                   \
                          $(DEBUGGING_CFLAGS)                                  \
-                         -std=gnu99 -pedantic -Werror                         \
+                         -std=gnu11 -pedantic -Werror                         \
                          -Wall -Wextra -Wno-unused-parameter
 
 include_HEADERS        = include/ofpsvr.h

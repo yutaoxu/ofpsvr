@@ -667,7 +667,10 @@ int handler (void *cls, struct MHD_Connection *connection,
         else if (con_info->finished)
         {
           char *infopage;
-          asprintf(&infopage,"<html><head><meta http-equiv=\"refresh\" content=\"0;URL=/blog/%d\" /><meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\" /></head><body>评论已发表 谢谢!</body></html>",con_info->parsed_article_id);
+          if (asprintf(&infopage,"<html><head><meta http-equiv=\"refresh\" content=\"0;URL=/blog/%d\" /><meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\" /></head><body>评论已发表 谢谢!</body></html>",con_info->parsed_article_id) < 0) {
+                  WRITELOG("asprintf failed when saying comment successfully published.\n");
+                  return OFPSVR_Q_500;
+          }
           int ret = send_page(connection,infopage);
           free(infopage);
           return ret;

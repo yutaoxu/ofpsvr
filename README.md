@@ -9,7 +9,7 @@
 指标 | 状态
 --- | --- 
 持续集成服务 | [![持续集成服务](https://travis-ci.org/pmq20/ofpsvr.svg?branch=master)](https://travis-ci.org/pmq20/ofpsvr)
-测试覆盖率 | [![测试覆盖率](https://coveralls.io/repos/pmq20/mruby-china/badge.png)](https://coveralls.io/r/pmq20/mruby-china)
+测试覆盖率 | [![测试覆盖率](https://coveralls.io/repos/pmq20/ofpsvr/badge.png)](https://coveralls.io/r/pmq20/ofpsvr)
 
 ## 编译
 

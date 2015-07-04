@@ -414,7 +414,7 @@ static int iterate_new_comment (void *coninfo_cls, enum MHD_ValueKind kind, cons
       if(!(  website_escape = malloc((strlen(con_info->website)*2+10)*sizeof(char))  )) return MHD_NO;
       if(mysql_real_escape_string(&mm,website_escape,con_info->website,strlen(con_info->website)) <= 0) return MHD_NO;
     } else {
-            website_escape = 0
+            website_escape = 0;
     }
     if(!(  body_escape = malloc((strlen(con_info->body)*2+10)*sizeof(char))  )) return MHD_NO;
     if(mysql_real_escape_string(&mm,body_escape,con_info->body,strlen(con_info->body)) <= 0) return MHD_NO;

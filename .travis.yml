@@ -45,7 +45,7 @@ after_success:
   - if [ $CC = gcc ]; then
       cd $TRAVIS_BUILD_DIR;
       make distclean;
-      export OFPSVR_NIGHT=$(date "+%Y-%m-%d").$(git rev-parse --short HEAD);
+      export OFPSVR_NIGHT=`./scripts/night`;
       mkdir $TRAVIS_BUILD_DIR/tmp;
       echo $TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT;
       mkdir $TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT;

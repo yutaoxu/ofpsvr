@@ -5,6 +5,7 @@ AC_PREREQ([2.68])
 AC_INIT(
   [OF P.S.V.R], [8.9.0.2], [pmq2001@gmail.com], [ofpsvr],
   [https://github.com/pmq20/ofpsvr])
+: ${CFLAGS=""}
 AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/headers.m4])
 m4_include([m4/ofpsvr_gitignore.m4])

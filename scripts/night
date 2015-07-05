@@ -29,5 +29,5 @@
 at_h = `git show -s --pretty=%at.%h HEAD`.to_s.strip
 at_hs = at_h.split('.')
 at_hs[0] = Time.at(at_hs[0].to_i).utc
-at_hs[0] = at_hs[0].strftime("%Y.%M.%d")
+at_hs[0] = at_hs[0].strftime("%Y.%m.%d")
 print at_hs.join('.')

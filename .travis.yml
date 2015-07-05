@@ -15,8 +15,8 @@ before_install:
       wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -;
       sudo add-apt-repository --yes 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise main';
       sudo apt-get update;
-      if [ "$CC" = "gcc" ]; then sudo apt-get install -y gcc-5 g++-5; sudo update-alternatives --remove-all gcc; sudo update-alternatives --remove-all g++; sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 50; sudo update-alternatives --install /usr/bin/gcc g++ /usr/bin/g++-5 50; sudo update-alternatives --config gcc; sudo update-alternatives --config g++; fi;
-      if [ "$CC" = "clang" ]; then sudo apt-get install clang-3.6; fi;
+      if [ "$CC" = "gcc" ]; then sudo apt-get install -y gcc-5 g++-5; sudo update-alternatives --remove-all gcc; sudo update-alternatives --remove-all g++; sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 50; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 50; sudo update-alternatives --config gcc; sudo update-alternatives --config g++; fi;
+      if [ "$CC" = "clang" ]; then sudo apt-get install llvm-3.6 llvm-3.6-dev clang-3.6 libstdc++-4.9-dev; sudo update-alternatives --remove-all clang; sudo update-alternatives --remove-all clang++; sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.6 50; sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clanclang++-3.6 50; sudo update-alternatives --config clang; sudo update-alternatives --config clang++; fi;
       sudo apt-get install -y libmysqlclient-dev;
       sudo apt-get install -y libmicrohttpd-dev;
       sudo apt-get install -y libssl-dev;

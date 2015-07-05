@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+
+# OF P.S.V.R
+# Copyright (c) 2015 P.S.V.R
+# 
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# Deploy
+# ---------
+# Called by the after_success script of `.travis.yml`,
+# uploading the nightly tarball onto CDN.
+# 
+# It assumes that,
+# * Variable TRAVIS_BUILD_DIR has been set
+# * Variable SENSITIVE_QINIU_AK has been set
+# * Variable SENSITIVE_QINIU_SK has been set
+# * Folder tmp has been created
+# * Folder tmp/nightly contains the nightly tarball
+
+require 'fileutils'
+require 'json'
+require 'shellwords'
+
+File.open("#{ENV['TRAVIS_BUILD_DIR']}/tmp/nightly.json", "w") do |f|
+  h = {}
+
+  # ● 本地源目录路径
+  # 是本地需要同步上传目录的完整的绝对路径。
+  # 这个目录中的所有内容会被同步到指定的 bucket 中。
+  # 注意：Windows 平台上路径的表示格式为：盘符:/目录，
+  # 比如 E 盘下的目录 data 表示为：e:/data 。
+  h[:src] = "#{ENV['TRAVIS_BUILD_DIR']}/tmp/nightly"
+
+  h[:dest] = "qiniu:access_key=#{ENV['SENSITIVE_QINIU_AK']}"
+  h[:dest] += "&secret_key=#{ENV['SENSITIVE_QINIU_SK']}"
+  h[:dest] += "&bucket=ofpsvr"
+  h[:dest] += "&key_prefix=nightly/"
+
+  # ● 是否同步删除七牛云上的文件
+  # 通常设置0，当本地文件删除时并不删除存储在七牛的对应文件。
+  # 如果你想删除本地文件的同时也删除存储在存储在七牛的文件,则设置为1。
+  h[:deletable] = 0
+
+  # ● 日志输出等级
+  # 通常设置1，只输出必要的日志。
+  # 当上传过程发生问题时，设置为0可以得到详细日志。
+  h[:debug_level] = 0
+
+  f.puts(h.to_json)
+end
+
+arg = Shellwords.escape "#{ENV['TRAVIS_BUILD_DIR']}/tmp/nightly.json"
+qrsync = Shellwords.escape "#{ENV['TRAVIS_BUILD_DIR']}/scripts/qrsync"
+puts `#{qrsync} #{arg}`

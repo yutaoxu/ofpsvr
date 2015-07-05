@@ -89,19 +89,26 @@ AC_ARG_WITH([gcov],
   [],
   [with_gcov=no])
 
-AC_ARG_WITH([debugging],
-  [AS_HELP_STRING([--with-debugging],
-    [Generates coverage reports @<:@default=no@:>@])],
-  [],
-  [with_debugging=no])
+AC_ARG_ENABLE(debug,
+  AS_HELP_STRING([--enable-debug],
+                 [enable debugging, default: no]),
+  [case "${enableval}" in
+               yes) debug=true ;;
+               no)  debug=false ;;
+               *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
+  esac],
+  [debug=false])
 
 AS_IF([test "x$with_gcov" != xno],
   [AC_SUBST([GCOV_CFLAGS], [--coverage])])
 
-AS_IF([test "x$with_debugging" != xno],
+AS_IF([test x"$debug" = x"true"],
   [
-    AC_SUBST([DEBUGGING_CFLAGS], [-g])
+    AC_SUBST([DEBUGGING_CFLAGS], ["-g3 -O0"])
     AC_DEFINE([OFPSVR_DEBUG], [1], [Enable debugging])
+  ],
+  [
+    AC_SUBST([DEBUGGING_CFLAGS], [-O3])
   ])
 
 AC_CONFIG_FILES([Makefile])

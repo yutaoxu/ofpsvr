@@ -32,7 +32,7 @@ before_install:
 script:
   - $CC --version
   - sh autogen.sh
-  - ./configure --with-gcov
+  - ./configure --with-gcov --enable-debug
   - make
   - make check
 
@@ -42,3 +42,18 @@ after_success:
       sed -i.bak 's/ofpsvr\/test\/test/ofpsvr\/test/g' coverage.info;
       coveralls-lcov coverage.info;
     fi
+  - cd $TRAVIS_BUILD_DIR
+  - make distclean
+  - export OFPSVR_NIGHT=$(date "+%Y-%m-%d").$(git rev-parse --short HEAD)
+  - echo $TRAVIS_BUILD_DIR/tmp
+  - mkdir $TRAVIS_BUILD_DIR/tmp
+  - mkdir $TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT
+  - ./configure --prefix=$TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT
+  - make
+  - make check
+  - make install
+  - cd $TRAVIS_BUILD_DIR/tmp
+  - mkdir nightly
+  - tar czf nightly/$OFPSVR_NIGHT.tar.gz $OFPSVR_NIGHT
+  - cd $TRAVIS_BUILD_DIR
+  - ./scripts/deploy

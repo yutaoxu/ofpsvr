@@ -50,20 +50,20 @@
              "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"
 #define OFPSVR_HEADER2 "</head>"\
              "<body>"\
-             "<a href=\"https://github.com/pmq20/BLOG-OF-P.S.V.R\"><img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png\" alt=\"Fork me on GitHub\"></a>"\
+             "<a href=\"https://github.com/pmq20/ofpsvr\"><img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png\" alt=\"Fork me on GitHub\"></a>"\
              "<div id=\"top\"><div id=\"logo\"><a href=\"/blog\"><img alt=\"Logo\" src=\"/resources/logo.png\" /></a><a href=\"/blog\"><img alt=\"Logo\" src=\"/resources/logo2.png\" /></a></div></div>"\
              "<table id=\"content\"><tr>"\
              "<!-- ======Content====== -->"\
              "<td id=\"main\">"
 #define OFPSVR_FOOTER  "</td>"\
              "<td id=\"sidebar\"><ul>"\
-             "<li><h2>About</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"http://www.gravatar.com/avatar/8002c84eb4c18170632f8fb7efb09288\" />Hello, I'm <strong>P.S.V.R</strong>, Living in happiness with <a href=\"http://insoeg.com/\"><strong>Insoeg</strong></a>.<br>[ <a href=\"http://ofpsvr.org/\">Home</a> ]<br style=\"clear:both\" /><strong>A.K.A.'s</strong>:Pan 平底锅 试管牛<br /><strong>Derivatives</strong>:平底牛 试管锅 事故按钮 ...</div></li>"\
+             "<li><h2>About</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"/img/me.jpg\" />Hello, I'm <strong>P.S.V.R</strong>, <br>a Senior Engineer of <a href=\"http://www.alibabagroup.com/\"><strong>Alibaba Group</strong></a>.<br>[ <a href=\"/\">Home</a> ]<br style=\"clear:both\" /><strong>A.K.A.'s</strong>:Pan 平底锅 试管牛<br /><strong>Derivatives</strong>:平底牛 试管锅 事故按钮 ...</div></li>"\
              "<li><h2>Subscribe</h2><div class=\"body\"><a href=\"/blog.xml\"><img id=\"rss\" alt=\"rss\" width=\"200\" height=\"173\" src=\"/resources/rss.png\" /></a></div></li>"\
              "<li><h2>Contact</h2><div class=\"body\"><ul><li><img alt=\"address\" src=\"/resources/email.png\" /></li></ul></div></li>"\
              "</ul></td>"\
              "<!-- ======Content====== -->"\
              "</tr></table>"\
-             "<div id=\"foot\"><p>Powered by <a href=\"https://github.com/pmq20/BLOG-OF-P.S.V.R\">BLOG-OF-P.S.V.R</a> v8.9.0.2. 作者：潘旻琦<br /><a href=\"http://ofpsvr.org\">Home</a> | <a href=\"http://validator.w3.org/check?uri=referer\">Validate XHTML</a> | <a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Validate CSS</a></p>"\
+             "<div id=\"foot\"><p>Powered by <a href=\"https://github.com/pmq20/ofpsvr\">ofpsvr v8.9.0.2</a>.<br /><a href=\"http://ofpsvr.org\">Home</a> | <a href=\"http://validator.w3.org/check?uri=referer\">Validate XHTML</a> | <a href=\"http://jigsaw.w3.org/css-validator/check/referer\">Validate CSS</a></p>"\
              "<div id=\"foot2\"></div></div>"\
              "<script type=\"text/javascript\">"\
              "  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){"\

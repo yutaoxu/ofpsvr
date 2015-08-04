@@ -288,44 +288,44 @@ struct connection_info_struct
   int finished;
 };
 
-static int iterate_new_ctrl (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
-             const char *filename, const char *content_type,
-             const char *transfer_encoding, const char *data, uint64_t off,
-             size_t size)
-{
-  if(size<=0) return MHD_YES;
-  assert(coninfo_cls);
-  struct connection_info_struct *con_info = (struct connection_info_struct *) coninfo_cls;
-  assert(con_info);
-  if (0 == strcmp (key, "data"))
-  {
-    if(!append_string(&(con_info->body),data))
-      return MHD_NO;
-  }
-  else if (0 == strcmp (key, "commit"))
-  {
-    mrb_value obj = mrb_load_string(mrb, con_info->body);
-
-    /* did an exception occur? */
-    if (mrb->exc) {
-      // obj = mrb_get_backtrace(mrb);
-      obj = mrb_obj_value(mrb->exc);
-      mrb->exc = 0;
-    }
-    
-    obj = mrb_funcall(mrb, obj, "inspect", 0);
-    
-    if(!(con_info->output = calloc(1, RSTRING_LEN(obj))))
-    {
-      WRITELOG("calloc failed when allocating mem-space for mruby output.\n");
-      return MHD_YES;
-    }
-    memcpy(con_info->output, RSTRING_PTR(obj), RSTRING_LEN(obj));
-    con_info->finished = 1;
-    return MHD_NO;
-  }
-  return MHD_YES;
-}
+// static int iterate_new_ctrl (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
+//              const char *filename, const char *content_type,
+//              const char *transfer_encoding, const char *data, uint64_t off,
+//              size_t size)
+// {
+//   if(size<=0) return MHD_YES;
+//   assert(coninfo_cls);
+//   struct connection_info_struct *con_info = (struct connection_info_struct *) coninfo_cls;
+//   assert(con_info);
+//   if (0 == strcmp (key, "data"))
+//   {
+//     if(!append_string(&(con_info->body),data))
+//       return MHD_NO;
+//   }
+//   else if (0 == strcmp (key, "commit"))
+//   {
+//     mrb_value obj = mrb_load_string(mrb, con_info->body);
+// 
+//     /* did an exception occur? */
+//     if (mrb->exc) {
+//       // obj = mrb_get_backtrace(mrb);
+//       obj = mrb_obj_value(mrb->exc);
+//       mrb->exc = 0;
+//     }
+//     
+//     obj = mrb_funcall(mrb, obj, "inspect", 0);
+//     
+//     if(!(con_info->output = calloc(1, RSTRING_LEN(obj))))
+//     {
+//       WRITELOG("calloc failed when allocating mem-space for mruby output.\n");
+//       return MHD_YES;
+//     }
+//     memcpy(con_info->output, RSTRING_PTR(obj), RSTRING_LEN(obj));
+//     con_info->finished = 1;
+//     return MHD_NO;
+//   }
+//   return MHD_YES;
+// }
 
 static int iterate_new_comment (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
              const char *filename, const char *content_type,
@@ -597,38 +597,6 @@ int handler (void *cls, struct MHD_Connection *connection,
     switch (slash_count)
     {
       case 1: // '/ctrl'
-        if (NULL == *con_cls)
-        {
-          struct connection_info_struct *con_info;
-          if(!(con_info = calloc (1,sizeof (struct connection_info_struct))))
-          {
-            return OFPSVR_Q_500;
-          }
-          if(!(con_info->postprocessor = MHD_create_post_processor (connection, POSTBUFFERSIZE, iterate_new_ctrl, (void *) con_info)))
-          {
-            free (con_info);
-            return OFPSVR_Q_500;
-          }
-          *con_cls = (void *) con_info;
-          return MHD_YES;
-        }
-        con_info = *con_cls;
-        if (*upload_data_size)
-        {
-          MHD_post_process (con_info->postprocessor, upload_data, *upload_data_size);
-          *upload_data_size = 0;
-          return MHD_YES;
-        }
-        else if (con_info->finished)
-        {
-          int ret = send_page(connection, con_info->output);
-          return ret;
-        }
-        else
-        {
-          return OFPSVR_Q_500;
-        } 
-        break;
       case 2: // "/blog/..."
         if (NULL == *con_cls)
         {

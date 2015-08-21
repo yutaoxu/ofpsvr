@@ -66,4 +66,4 @@ sudo make install
 
 ## 许可协议
 
-本项目的源代码在 [MIT 许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE) 下发布.
+`OF P.S.V.R` 是一个自由软件；您可依据  [GNU 通用公共许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE) 的条款，对本程序进行修改和/或再发布。在该协议的保护下，`OF P.S.V.R` 的所有修改版均将保持自由开放，欢迎贡献代码！

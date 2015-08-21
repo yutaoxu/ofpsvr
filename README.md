@@ -66,4 +66,4 @@ sudo make install
 
 ## 许可协议
 
-`ofpsvr` 是一个自由软件；您可依据  [GNU 通用公共许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE) 的条款，对本软件进行修改和/或再发布。在协议的保护下，`ofpsvr` 的所有修改版均将保持自由开放，欢迎贡献代码！
+本软件是一个自由软件；您可依据  [GNU 通用公共许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE) 的条款，对源代码进行修改和/或再发布。在协议的保护下，所有修改版将持续保持自由开放，欢迎贡献代码！

@@ -1,22 +1,22 @@
 #include "ofpsvr.h"
 
-mrb_value ofpsvr_uid(mrb_state *mrb, mrb_value obj)
+mrb_value ofpsvr_uid(mrb_state * mrb, mrb_value obj)
 {
-  return mrb_fixnum_value(getuid());
+        return mrb_fixnum_value(getuid());
 }
 
-mrb_value ofpsvr_gid(mrb_state *mrb, mrb_value obj)
+mrb_value ofpsvr_gid(mrb_state * mrb, mrb_value obj)
 {
-  return mrb_fixnum_value(getgid());
+        return mrb_fixnum_value(getgid());
 }
 
-mrb_value ofpsvr_halt(mrb_state *mrb, mrb_value obj)
+mrb_value ofpsvr_halt(mrb_state * mrb, mrb_value obj)
 {
-  return mrb_fixnum_value(raise(SIGINT));
+        return mrb_fixnum_value(raise(SIGINT));
 }
 
-mrb_value ofpsvr_substantiate(mrb_state *mrb, mrb_value obj)
+mrb_value ofpsvr_substantiate(mrb_state * mrb, mrb_value obj)
 {
-  substantiate();
-  return mrb_fixnum_value(0);
+        substantiate();
+        return mrb_fixnum_value(0);
 }

@@ -1,7 +1,12 @@
+SUBDIRS                = deps/mruby                                           \
+                         deps/captcha                                         \
+                         deps/libmicrohttpd
+
 ACLOCAL_AMFLAGS        = -I m4
 
 AM_CFLAGS              = -I$(top_srcdir)/include                              \
                          -I$(top_srcdir)/deps/mruby/include                   \
+                         -I$(top_srcdir)/deps/libmicrohttpd/src/include       \
                          $(DEBUGGING_CFLAGS)                                  \
                          -std=gnu11 -pedantic -Werror                         \
                          -Wall -Wextra -Wno-unused-parameter
@@ -18,7 +23,8 @@ libofpsvr_la_SOURCES   = handler.c                                            \
 
 bin_PROGRAMS           = ofpsvr
 ofpsvr_LDADD           = libofpsvr.la                                         \
-                         $(top_srcdir)/deps/mruby/build/host/lib/libmruby.a
+                         $(top_srcdir)/deps/mruby/build/host/lib/libmruby.a   \
+                         $(top_srcdir)/deps/libmicrohttpd/src/microhttpd/.libs/libmicrohttpd.a
 ofpsvr_SOURCES         = main.c
 
 TESTS                  = test/run

@@ -16,7 +16,6 @@
 
 * [Autoconf](http://www.gnu.org/software/autoconf/autoconf.html) / [Automake](http://www.gnu.org/software/automake/) / [GNU Libtool](http://www.gnu.org/software/libtool/)
 * [MySQL Connector/C (libmysqlclient)](https://dev.mysql.com/downloads/connector/c)
-* [GNU Libmicrohttpd](https://www.gnu.org/software/libmicrohttpd/)
 * [OpenSSL](https://www.openssl.org/)
 * [Check](http://check.sourceforge.net/) 与 [LCOV](http://ltp.sourceforge.net/coverage/lcov.php)
 
@@ -25,19 +24,11 @@
 ```sh
 sudo apt-get install libtool autoconf automake
 sudo apt-get install libmysqlclient-dev
-sudo apt-get install libmicrohttpd-dev
 sudo apt-get install libssl-dev
 sudo apt-get install check lcov
 ```
 
-先进入 deps/mruby 目录编译 mruby 依赖包：
-
-```sh
-cd deps/mruby
-./minirake
-```
-
-回到主目录，执行：
+进入项目根目录，执行：
 
 ```sh
 sh autogen.sh
@@ -66,4 +57,4 @@ sudo make install
 
 ## 许可协议
 
-本项目的源代码在 [MIT 许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE) 下发布.
+本项目的源代码在 [MIT 许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE) 下发.

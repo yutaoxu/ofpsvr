@@ -1,0 +1,1 @@
+find . -path ./deps -prune -o -name \*.c -exec mate {} \;

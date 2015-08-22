@@ -24,7 +24,6 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AM_PROG_AR
-AC_PROG_RANLIB
 AM_PROG_CC_C_O
 
 LT_INIT
@@ -37,12 +36,6 @@ AC_CHECK_HEADER(
   [
     AC_MSG_ERROR([Please install MySQL Connector/C (libmysqlclient);
       cf. https://dev.mysql.com/downloads/connector/c])
-  ])
-AC_CHECK_HEADER(
-  [microhttpd.h], ,
-  [
-    AC_MSG_ERROR([Please install GNU Libmicrohttpd;
-      cf. https://www.gnu.org/software/libmicrohttpd/])
   ])
 AC_CHECK_HEADER(
   [openssl/md5.h], ,
@@ -58,7 +51,6 @@ AC_CHECK_HEADER(
   ])
 
 # Checks for libraries.
-AC_CHECK_LIB([microhttpd], [MHD_queue_response])
 AC_CHECK_LIB([mysqlclient], [mysql_init])
 AC_CHECK_LIB([pthread], [pthread_mutex_init])
 AC_CHECK_LIB([crypto], [MD5])
@@ -111,6 +103,9 @@ AS_IF([test x"$debug" = x"true"],
   [
     AC_SUBST([DEBUGGING_CFLAGS], [-O3])
   ])
+
+
+AC_CONFIG_SUBDIRS([deps/libmicrohttpd])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

@@ -36,7 +36,7 @@ static void ofpsvr__explain_error(int error_number)
         switch (error_number) {
 #define XX(code, msg)                                                         \
         case code:                                                            \
-                fprintf(stderr, "[OFPSVR ERROR] %s;\n", msg);                  \
+                fprintf(stderr, "[OFPSVR ERROR] %s;\n", msg);                 \
                 break;
 
                 OFPSVR_ERRNO_MAP(XX)
@@ -57,7 +57,7 @@ void ofpsvr_error(int error_number)
         ofpsvr__explain_error(error_number);
 }
 
-void ofpsvr_location_stderr(const char* file, int line)
+void ofpsvr_location_stderr(const char *file, int line)
 {
         fprintf(stderr, "[OFPSVR DEBUG] ");
         fprintf(stderr, "On line %d of file %s;\n", line, file);

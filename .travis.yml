@@ -25,8 +25,6 @@ before_install:
       brew install check lcov;
     fi
   - gem install coveralls-lcov
-  - cd $TRAVIS_BUILD_DIR/deps/mruby
-  - ./minirake
   - cd $TRAVIS_BUILD_DIR
 
 script:

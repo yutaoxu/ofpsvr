@@ -15,3 +15,6 @@ test : all
 clean :
 	$(RAKE) clean
 .PHONY : clean
+
+check : test
+.PHONY : check

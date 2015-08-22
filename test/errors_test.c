@@ -28,22 +28,20 @@ START_TEST(ofpsvr_fatal_test_911)
 {
         ofpsvr_fatal(911);
 }
-END_TEST
 
-START_TEST(ofpsvr_fatal_test_mem)
+END_TEST START_TEST(ofpsvr_fatal_test_mem)
 {
         ofpsvr_fatal(-1);
 }
-END_TEST
 
-Suite *ofpsvr_test_errors()
+END_TEST Suite *ofpsvr_test_errors()
 {
         Suite *s;
         TCase *tc_core;
 
         s = suite_create("Error handling");
         tc_core = tcase_create("Core");
-        
+
         suite_add_tcase(s, tc_core);
         tcase_add_exit_test(tc_core, ofpsvr_fatal_test_911, 911);
         tcase_add_exit_test(tc_core, ofpsvr_fatal_test_mem, -1);

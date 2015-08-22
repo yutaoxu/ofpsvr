@@ -34,7 +34,7 @@ int main()
 
         srunner_add_suite(sr, ofpsvr_test_errors());
 
-        srunner_run_all (sr, CK_VERBOSE);
+        srunner_run_all(sr, CK_VERBOSE);
         n = srunner_ntests_failed(sr);
         srunner_free(sr);
 

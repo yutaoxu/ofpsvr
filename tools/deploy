@@ -67,5 +67,5 @@ File.open("#{ENV['TRAVIS_BUILD_DIR']}/tmp/nightly.json", "w") do |f|
 end
 
 arg = Shellwords.escape "#{ENV['TRAVIS_BUILD_DIR']}/tmp/nightly.json"
-qrsync = Shellwords.escape "#{ENV['TRAVIS_BUILD_DIR']}/scripts/qrsync"
+qrsync = Shellwords.escape "#{ENV['TRAVIS_BUILD_DIR']}/tools/qrsync"
 puts `#{qrsync} #{arg}`

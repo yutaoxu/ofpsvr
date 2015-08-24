@@ -47,7 +47,7 @@ sudo make install
 * `OFPSVR_DB_PASSWD` - MySQL 密码
 * `OFPSVR_DB_DB`     - MySQL 数据库名
 
-在这些环境变量之下用根用户执行 `ofpsvr` 即可，例如
+在这些环境变量之下用根用户执行 `ofpsvr` 即可，例如：
 
     sudo OFPSVR_DB_HOST=127.0.0.1 OFPSVR_DB_USER=user1 OFPSVR_DB_PASSWD=secret OFPSVR_DB_DB=ofpsvr ofpsvr
 
@@ -57,4 +57,4 @@ sudo make install
 
 ## 许可协议
 
-本软件是自由软件，在 [GNU 通用公共许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE) 下发布。
+本项目使用 [GNU 通用公共许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE)，请在遵守该协议的前提下使用其源代码.

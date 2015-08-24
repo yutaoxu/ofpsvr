@@ -57,4 +57,4 @@ sudo make install
 
 ## 许可协议
 
-本项目使用 [GNU 通用公共许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE)，请在遵守该协议的前提下使用其源代码.
+本项目使用 [GNU 通用公共许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE)，请在遵守该协议的前提下使用源代码.

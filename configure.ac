@@ -51,6 +51,7 @@ AC_CHECK_HEADER(
   ])
 
 # Checks for libraries.
+AC_CHECK_LIB([gnutls], [gnutls_cipher_get])
 AC_CHECK_LIB([mysqlclient], [mysql_init])
 AC_CHECK_LIB([pthread], [pthread_mutex_init])
 AC_CHECK_LIB([crypto], [MD5])

@@ -27,15 +27,15 @@ before_install:
   - ./configure
   - make
   - sudo make install
-  - cd $TRAVIS_BUILD_DIR
-
-script:
   - $CC --version
   - autoconf --version
   - automake --version
   - ls /usr/share/aclocal
   - sudo mkdir -p /usr/local/share/aclocal
   - sudo ln -s /usr/share/aclocal/* /usr/local/share/aclocal
+  - cd $TRAVIS_BUILD_DIR
+
+script:
   - sh autogen.sh
   - ./configure --with-gcov --enable-debug
   - make

@@ -18,6 +18,7 @@
 * [MySQL Connector/C (libmysqlclient)](https://dev.mysql.com/downloads/connector/c)
 * [OpenSSL](https://www.openssl.org/)
 * [Check](http://check.sourceforge.net/) 与 [LCOV](http://ltp.sourceforge.net/coverage/lcov.php)
+* [GnuTLS](http://www.gnutls.org/)
 
 作为参考，Ubuntu 用户可通过以下命令安装这些系统组件：
 
@@ -25,6 +26,7 @@
 sudo apt-get install libtool autoconf automake
 sudo apt-get install libmysqlclient-dev
 sudo apt-get install libssl-dev
+sudo apt-get install libgnutls-dev
 sudo apt-get install check lcov
 ```
 

@@ -46,7 +46,9 @@ script:
   - aclocal --version
   - autoconf --version
   - automake --version
-  - export ACLOCAL_FLAGS="-I /usr/share/aclocal"
+  - ls /usr/share/aclocal
+  - sudo mkdir -p /usr/local/share/aclocal
+  - sudo ln -s /usr/share/aclocal/* /usr/local/share/aclocal
   - sh autogen.sh
   - ./configure --with-gcov --enable-debug
   - make

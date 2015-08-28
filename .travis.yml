@@ -21,6 +21,7 @@ before_install:
       sudo apt-get install -y libmicrohttpd-dev;
       sudo apt-get install -y libssl-dev;
       sudo apt-get install -y check lcov;
+	  sudo apt-get install -y autoconf2.64;
     elif [ $TRAVIS_OS_NAME = osx ]; then
       brew install check lcov;
     fi
@@ -29,6 +30,8 @@ before_install:
 
 script:
   - $CC --version
+  - aclocal --version
+  - autoconf --version
   - sh autogen.sh
   - ./configure --with-gcov --enable-debug
   - make

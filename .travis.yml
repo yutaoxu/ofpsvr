@@ -26,9 +26,15 @@ before_install:
     fi
   - gem install coveralls-lcov
   - cd /tmp
-  - wget http://ftp.gnu.org/gnu/automake/automake-1.14.tar.gz
-  - tar xzf automake-1.14.tar.gz
-  - cd automake-1.14
+  - wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz
+  - tar xzf autoconf-2.69.tar.gz
+  - cd autoconf-2.69
+  - ./configure
+  - make
+  - sudo make install
+  - wget http://ftp.gnu.org/gnu/automake/automake-1.14.1.tar.gz
+  - tar xzf automake-1.14.1.tar.gz
+  - cd automake-1.14.1
   - ./configure
   - make
   - sudo make install

@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.68])
+AC_PREREQ([2.69])
 AC_INIT(
   [OF P.S.V.R], [8.9.0.2], [pmq2001@gmail.com], [ofpsvr],
   [https://github.com/pmq20/ofpsvr])

@@ -30,6 +30,7 @@ ofpsvr_SOURCES         = main.c
 TESTS                  = test/run
 check_PROGRAMS         = test/run
 test_run_LDADD         = libofpsvr.la -lcheck                                 \
-                         $(top_srcdir)/deps/mruby/build/host/lib/libmruby.a
+                         $(top_srcdir)/deps/mruby/build/host/lib/libmruby.a   \
+                         $(top_srcdir)/deps/libmicrohttpd/src/microhttpd/.libs/libmicrohttpd.a
 test_run_SOURCES       = test/errors_test.c                                   \
                          test/run.c

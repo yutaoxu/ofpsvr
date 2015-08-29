@@ -139,6 +139,8 @@ struct Article
 
 // *** Global Variables ***
 
+extern char *asset_host;
+
 extern struct Article **articles;
 extern int articles_len;
 

@@ -31,6 +31,7 @@
 #include "ofpsvr.h"
 
 jmp_buf main_loop;
+char *asset_host;
 
 static char *utime2rfctime(long u)
 {
@@ -149,6 +150,10 @@ int main(int argc, const char *argv[])
         size_t sz;
         cache_size = 0;
         cache_size_silent = 1;
+        
+        asset_host = getenv("OFPSVR_ASSET_HOST");
+        if (NULL == asset_host)
+                asset_host = "";
 
         // 0.Connecting DB
         printf("Connecting DB...");

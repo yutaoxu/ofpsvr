@@ -87,11 +87,17 @@ ofpsvr
 
 除了上述必选的环境变量外，还有下列可选的环境变量：
 
-* `todo`   - todo
+* `OFPSVR_ASSET_HOST`   - 静态文件的 CDN 地址头，结尾无斜杠
+
+例如：
+
+```sh
+export OFPSVR_ASSET_HOST=http://7xjzhb.com1.z0.glb.clouddn.com/890201
+```
 
 ## 代码风格
 
-本项目遵循 [Linux 内核代码风格](https://www.kernel.org/doc/Documentation/CodingStyle).
+本项目遵循 [Linux 内核代码风格](https://raw.githubusercontent.com/pmq20/ofpsvr/master/CodingStyle).
 
 ## 许可协议
 

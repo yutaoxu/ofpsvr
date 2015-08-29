@@ -62,7 +62,7 @@
              "<td id=\"main\">"
 #define OFPSVR_FOOTER  "</td>"\
              "<td id=\"sidebar\"><ul>"\
-             "<li><h2>关于我</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"/img/me.jpg\" />大家好, 我叫 <strong>P.S.V.R</strong>, 专注于研制模型清晰、易于使用、健壮可靠的高品质软件。<br style=\"clear:both\" /><strong>曾用名</strong>: Pan 平底锅 试管牛<br /><strong>衍生名</strong>: 平底牛 试管锅 事故按钮 ...</div></li>"\
+             "<li><h2>关于我</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"%s/img/me.jpg\" />大家好, 我叫 <strong>P.S.V.R</strong>, 专注于开发健壮可靠、易于使用、文档清晰的高品质软件。<br style=\"clear:both\" /><strong>曾用名</strong>: Pan 平底锅 试管牛<br /><strong>衍生名</strong>: 平底牛 试管锅 事故按钮 ...</div></li>"\
              "<li><h2>订阅</h2><div class=\"body\"><a href=\"/blog.xml\"><img id=\"rss\" alt=\"rss\" width=\"200\" height=\"173\" src=\"/resources/rss.png\" /></a></div></li>"\
              "<li><h2>联系我</h2><div class=\"body\"><ul><li><img alt=\"address\" src=\"/resources/email.png\" /></li></ul></div></li>"\
              "</ul></td>"\
@@ -289,7 +289,7 @@ int regenerate(struct Article *x, int id)
                      "<label for=\"url\">您的网站（可选）</label></p>"
                      "<p><textarea tabindex=\"4\" rows=\"5\" cols=\"100\" id=\"comment\" name=\"reply[body]\"></textarea></p>"
                      "<p><input type=\"submit\" value=\"提交评论\" tabindex=\"5\" id=\"submit\" name=\"commit\"/></p>"
-                     "</form>" OFPSVR_FOOTER, old) < 0) {
+                     "</form>" OFPSVR_FOOTER, old, asset_host) < 0) {
                 return 0;
         }
         assert(old);
@@ -405,7 +405,7 @@ struct MHD_Response *generate_blog_response()
                 free(resource_count_str);
         }
         old = page;
-        if (asprintf(&page, "%s" OFPSVR_FOOTER, old) < 0) {
+        if (asprintf(&page, "%s" OFPSVR_FOOTER, old, asset_host) < 0) {
                 return NULL;
         }
         assert(old);
@@ -479,7 +479,7 @@ struct MHD_Response *generate_blog_response_rss()
         return ret;
 }
 
-static struct MHD_Response *response_static_page(const char *content)
+static struct MHD_Response *response_static_page(char *content)
 {
         struct MHD_Response *response;
         if (!
@@ -542,30 +542,38 @@ void prepare_response_500()
 
 void prepare_response_index()
 {
-        response_index = response_static_page("<!DOCTYPE html>"
-                                              "<html>"
-                                              "    <head>"
-                                              "        <meta charset=\"utf-8\">"
-                                              "        <meta http-equiv=\"x-ua-compatible\" content=\"ie=edge\">"
-                                              "        <title>P.S.V.R 的软件实验室</title>"
-                                              "        <meta name=\"description\" content=\"P.S.V.R 的软件实验室\">"
-                                              "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-                                              "        <link rel=\"apple-touch-icon\" href=\"apple-touch-icon.png\">"
-                                              "        <link rel=\"stylesheet\" href=\"css/ofpsvr.css\">"
-                                              "        <!--[if IE 6]><link rel=\"stylesheet\" type=\"text/css\" href=\"css/ie6.css\" /><![endif]-->"
-                                              "    </head>"
-                                              "    <body>"
-                                              "        <div class=\"i\">"
-                                              "            <a href=\"/blog\"><img src=\"img/index.png\" alt=\"P.S.V.R 的软件实验室\"></img></a>"
-                                              "            <p><a href=\"/blog\"><span class=\"welcome\">欢迎进入</span> P.S.V.R 的软件实验室</a></p>"
-                                              "        </div>"
-                                              "        <script>"
-                                              "            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){"
-                                              "            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),"
-                                              "            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)"
-                                              "            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');"
-                                              "            ga('create', 'UA-63776545-1', 'auto');"
-                                              "            ga('send', 'pageview');"
-                                              "        </script>"
-                                              "    </body>" "</html>");
+        char *page;
+        if (asprintf(&page,
+                     "<!DOCTYPE html>"
+                     "<html>"
+                     "    <head>"
+                     "        <meta charset=\"utf-8\">"
+                     "        <meta http-equiv=\"x-ua-compatible\" content=\"ie=edge\">"
+                     "        <title>P.S.V.R 的软件实验室</title>"
+                     "        <meta name=\"description\" content=\"P.S.V.R 的软件实验室\">"
+                     "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+                     "        <link rel=\"apple-touch-icon\" href=\"%s/apple-touch-icon.png\">"
+                     "        <link rel=\"stylesheet\" href=\"%s/css/ofpsvr.css\">"
+                     "        <!--[if IE 6]><link rel=\"stylesheet\" type=\"text/css\" href=\"%s/css/ie6.css\" /><![endif]-->"
+                     "    </head>"
+                     "    <body>"
+                     "        <div class=\"i\">"
+                     "            <a href=\"/blog\"><img src=\"%s/img/index.png\" alt=\"P.S.V.R 的软件实验室\"></img></a>"
+                     "            <p><a href=\"/blog\"><span class=\"welcome\">欢迎进入</span> P.S.V.R 的软件实验室</a></p>"
+                     "        </div>"
+                     "        <script>"
+                     "            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){"
+                     "            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),"
+                     "            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)"
+                     "            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');"
+                     "            ga('create', 'UA-63776545-1', 'auto');"
+                     "            ga('send', 'pageview');"
+                     "        </script>"
+                     "    </body>" "</html>",
+                     asset_host, asset_host, asset_host, asset_host) < 0) {
+                WRITELOG("sufficient space cannot be allocated in asprintf of prepare_resposnse_index");
+                exit(EXIT_FAILURE);
+        }
+        
+        response_index = response_static_page(page);
 }

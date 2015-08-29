@@ -138,6 +138,7 @@ struct Article
 };
 
 // *** Global Variables ***
+// FIXME: Remove these global var's
 
 extern char *asset_host;
 

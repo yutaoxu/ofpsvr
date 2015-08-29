@@ -30,6 +30,8 @@
 
 #include "ofpsvr.h"
 
+// FIXME: Remove these global var's
+
 char *asset_host = "";
 
 struct Article **articles;

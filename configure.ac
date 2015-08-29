@@ -58,6 +58,12 @@ AC_CHECK_LIB([pthread], [pthread_mutex_init])
 AC_CHECK_LIB([crypto], [MD5])
 AC_CHECK_LIB([check], [srunner_run_all])
 
+# Generic Program and File Checks
+AC_CHECK_PROG(IMAGE_MAGICK_CHECK,identify,yes)
+if test x"$IMAGE_MAGICK_CHECK" != x"yes" ; then
+    AC_MSG_ERROR([Please install ImageMagick before installing.])
+fi
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_PID_T
 AC_CHECK_HEADER_STDBOOL

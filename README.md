@@ -10,17 +10,32 @@
 [![文档生成](https://readthedocs.org/projects/ofpsvr/badge/?version=latest)](http://ofpsvr.readthedocs.org/zh_CN/latest/)
 [![测试覆盖率](https://coveralls.io/repos/pmq20/ofpsvr/badge.png)](https://coveralls.io/r/pmq20/ofpsvr)
 
-## 编译
+## 系统组件
 
-必要的系统组件：
+本项目依赖于以下必要的系统组件：
 
 * [Autoconf](http://www.gnu.org/software/autoconf/autoconf.html) / [Automake](http://www.gnu.org/software/automake/) / [GNU Libtool](http://www.gnu.org/software/libtool/)
 * [MySQL Connector/C (libmysqlclient)](https://dev.mysql.com/downloads/connector/c)
 * [OpenSSL](https://www.openssl.org/)
-* [Check](http://check.sourceforge.net/) 与 [LCOV](http://ltp.sourceforge.net/coverage/lcov.php)
 * [GnuTLS](http://www.gnutls.org/)
+* [ImageMagick](http://www.imagemagick.org/)
+* [Check](http://check.sourceforge.net/)
+* [LCOV](http://ltp.sourceforge.net/coverage/lcov.php)
 
-作为参考，Ubuntu 用户可通过以下命令安装这些系统组件：
+如果您使用 Mac，可以可通过以下命令安装这些系统组件：
+
+```sh
+brew install libtool
+brew install autoconf
+brew install automake
+brew install mysql
+brew install gnutls
+brew install imagemagick
+brew install check
+brew install lcov
+```
+
+如果您使用 Ubuntu，可以可通过以下命令安装这些系统组件：
 
 ```sh
 sudo apt-get install libtool autoconf automake
@@ -30,10 +45,17 @@ sudo apt-get install libgnutls-dev
 sudo apt-get install check lcov
 ```
 
-进入项目根目录，执行：
+## 编译安装
+
+如果是从代码仓库下载的源码，清先执行：
 
 ```sh
 sh autogen.sh
+```
+
+进入项目根目录，执行：
+
+```sh
 ./configure
 make
 make check
@@ -51,7 +73,11 @@ sudo make install
 
 在这些环境变量之下用根用户执行 `ofpsvr` 即可，例如：
 
-    sudo OFPSVR_DB_HOST=127.0.0.1 OFPSVR_DB_USER=user1 OFPSVR_DB_PASSWD=secret OFPSVR_DB_DB=ofpsvr ofpsvr
+export OFPSVR_DB_HOST=127.0.0.1
+export OFPSVR_DB_USER=user1
+export OFPSVR_DB_PASSWD=secret
+export OFPSVR_DB_DB=ofpsvr
+sudo ofpsvr
 
 ## 代码风格
 

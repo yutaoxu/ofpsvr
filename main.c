@@ -77,10 +77,6 @@ int main(int argc, const char *argv[])
         mrb_define_module_function(mrb, mrb_ofpsvr, "substantiate!",
                                    ofpsvr_substantiate, MRB_ARGS_NONE());
 
-        if (0 != getuid()) {
-                WRITELOG("Please be root to run this program.\n");
-                return EXIT_FAILURE;
-        }
         if (access(OFPSVR_PID_FILE, F_OK) == 0) {
                 FILE *fp = fopen(OFPSVR_PID_FILE, "r");
                 int existing_pid;
@@ -102,36 +98,39 @@ int main(int argc, const char *argv[])
         }
 
         pid_t pid, sid;
-        pid = fork();
-        if (pid < 0) {
-                WRITELOG("fork failed!\n");
-                exit(EXIT_FAILURE);
-        }
-        if (pid > 0) {
-                WRITELOG("ofpsvr started.\n");
-                exit(EXIT_SUCCESS);
-        }
-        umask(0);
-        sid = setsid();
-        if (sid < 0) {
-                WRITELOG("setsid failed!\n");
-                exit(EXIT_FAILURE);
-        }
-        if ((chdir("/")) < 0) {
-                WRITELOG("chdir failed!\n");
-                exit(EXIT_FAILURE);
-        }
 
-        FILE *fp = fopen(OFPSVR_PID_FILE, "w");
-        fprintf(fp, "%d\n", getpid());
-        fclose(fp);
+        if(!(2 == argc && 0 == strcmp(argv[1], "nofork"))) {
+          pid = fork();
+          if (pid < 0) {
+                  WRITELOG("fork failed!\n");
+                  exit(EXIT_FAILURE);
+          }
+          if (pid > 0) {
+                  WRITELOG("ofpsvr started.\n");
+                  exit(EXIT_SUCCESS);
+          }
+          umask(0);
+          sid = setsid();
+          if (sid < 0) {
+                  WRITELOG("setsid failed!\n");
+                  exit(EXIT_FAILURE);
+          }
+          if ((chdir("/")) < 0) {
+                  WRITELOG("chdir failed!\n");
+                  exit(EXIT_FAILURE);
+          }
 
-        close(STDIN_FILENO);
-        if (!freopen(OFPSVR_LOG_FILE, "a+", stdout)) {
-                WRITELOG("freopen %s failed!\n", OFPSVR_LOG_FILE);
-                exit(EXIT_FAILURE);
+          FILE *fp = fopen(OFPSVR_PID_FILE, "w");
+          fprintf(fp, "%d\n", getpid());
+          fclose(fp);
+
+          close(STDIN_FILENO);
+          if (!freopen(OFPSVR_LOG_FILE, "a+", stdout)) {
+                  WRITELOG("freopen %s failed!\n", OFPSVR_LOG_FILE);
+                  exit(EXIT_FAILURE);
+          }
+          close(STDERR_FILENO);
         }
-        close(STDERR_FILENO);
 
         WRITELOG("___________________OFPSVR.COM_____________________\n");
         WRITELOG("Version %d\n", OFPSVR_VERSION);

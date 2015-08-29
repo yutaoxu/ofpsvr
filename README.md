@@ -47,7 +47,7 @@ sudo apt-get install check lcov
 
 ## 编译安装
 
-如果是从代码仓库下载的源码，清先执行：
+如果是从代码仓库下载的源码，请先执行：
 
 ```sh
 sh autogen.sh
@@ -73,11 +73,13 @@ sudo make install
 
 在这些环境变量之下用根用户执行 `ofpsvr` 即可，例如：
 
+```sh
 export OFPSVR_DB_HOST=127.0.0.1
 export OFPSVR_DB_USER=user1
 export OFPSVR_DB_PASSWD=secret
 export OFPSVR_DB_DB=ofpsvr
-sudo ofpsvr
+ofpsvr
+```
 
 ## 代码风格
 

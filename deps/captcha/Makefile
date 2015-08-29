@@ -33,3 +33,7 @@ publish: clean
 
 check : testlib
 .PHONY : check
+
+install :
+       echo make install for captcha is a no-op
+.PHONY : install

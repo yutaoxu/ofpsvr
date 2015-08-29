@@ -18,3 +18,7 @@ clean :
 
 check : test
 .PHONY : check
+
+install :
+       echo make install for mruby is a no-op
+.PHONY : install

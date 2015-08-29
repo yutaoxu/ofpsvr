@@ -97,8 +97,8 @@ export OFPSVR_ASSET_HOST=http://7xjzhb.com1.z0.glb.clouddn.com/890201
 
 ## 代码风格
 
-本项目遵循 [Linux 内核代码风格](https://raw.githubusercontent.com/pmq20/ofpsvr/master/CodingStyle).
+本项目遵循 [Linux 内核代码风格](https://raw.githubusercontent.com/pmq20/ofpsvr/master/CodingStyle)。
 
 ## 许可协议
 
-本项目使用 [GNU 通用公共许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE)，请在遵守该协议的前提下使用源代码.
+本项目使用 [GNU 通用公共许可协议](https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE)，请在遵守该协议的前提下使用源代码。

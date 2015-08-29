@@ -105,37 +105,37 @@ int main(int argc, const char *argv[])
 
         pid_t pid, sid;
 
-        if(!(2 == argc && 0 == strcmp(argv[1], "nofork"))) {
-          pid = fork();
-          if (pid < 0) {
-                  WRITELOG("fork failed!\n");
-                  exit(EXIT_FAILURE);
-          }
-          if (pid > 0) {
-                  WRITELOG("ofpsvr started.\n");
-                  exit(EXIT_SUCCESS);
-          }
-          umask(0);
-          sid = setsid();
-          if (sid < 0) {
-                  WRITELOG("setsid failed!\n");
-                  exit(EXIT_FAILURE);
-          }
-          if ((chdir("/")) < 0) {
-                  WRITELOG("chdir failed!\n");
-                  exit(EXIT_FAILURE);
-          }
+        if (!(2 == argc && 0 == strcmp(argv[1], "nofork"))) {
+                pid = fork();
+                if (pid < 0) {
+                        WRITELOG("fork failed!\n");
+                        exit(EXIT_FAILURE);
+                }
+                if (pid > 0) {
+                        WRITELOG("ofpsvr started.\n");
+                        exit(EXIT_SUCCESS);
+                }
+                umask(0);
+                sid = setsid();
+                if (sid < 0) {
+                        WRITELOG("setsid failed!\n");
+                        exit(EXIT_FAILURE);
+                }
+                if ((chdir("/")) < 0) {
+                        WRITELOG("chdir failed!\n");
+                        exit(EXIT_FAILURE);
+                }
 
-          FILE *fp = fopen(OFPSVR_PID_FILE, "w");
-          fprintf(fp, "%d\n", getpid());
-          fclose(fp);
+                FILE *fp = fopen(OFPSVR_PID_FILE, "w");
+                fprintf(fp, "%d\n", getpid());
+                fclose(fp);
 
-          close(STDIN_FILENO);
-          if (!freopen(OFPSVR_LOG_FILE, "a+", stdout)) {
-                  WRITELOG("freopen %s failed!\n", OFPSVR_LOG_FILE);
-                  exit(EXIT_FAILURE);
-          }
-          close(STDERR_FILENO);
+                close(STDIN_FILENO);
+                if (!freopen(OFPSVR_LOG_FILE, "a+", stdout)) {
+                        WRITELOG("freopen %s failed!\n", OFPSVR_LOG_FILE);
+                        exit(EXIT_FAILURE);
+                }
+                close(STDERR_FILENO);
         }
 
         WRITELOG("___________________OFPSVR.COM_____________________\n");
@@ -150,7 +150,7 @@ int main(int argc, const char *argv[])
         cache_size = 0;
         cache_size_silent = 1;
 
-        //0.Connecting DB
+        // 0.Connecting DB
         printf("Connecting DB...");
         fflush(stdout);
         if (!mysql_init(&my)) {
@@ -171,7 +171,7 @@ int main(int argc, const char *argv[])
         }
         printf("OK\n");
 
-        //1.Retrieving Articles
+        // 1. Retrieving Articles
         if (mysql_query(&my, "SELECT * FROM ofpsvr_articles ORDER BY id")) {
                 WRITELOG("SELECT error: %s\n", mysql_error(&my));
                 return EXIT_FAILURE;
@@ -251,7 +251,7 @@ int main(int argc, const char *argv[])
         }
         mysql_free_result(res_ptr);
 
-        //2.Retrieving Comments
+        // 2. Retrieving Comments
         if (mysql_query(&my, "SELECT * FROM ofpsvr_comments ORDER BY id")) {
                 WRITELOG("SELECT error: %s\n", mysql_error(&my));
                 return EXIT_FAILURE;
@@ -300,7 +300,10 @@ int main(int argc, const char *argv[])
         }
         mysql_free_result(res_ptr);
 
-        //3.Retrieving Resources
+        // 3. Retrieving Resources
+        prepare_response_404();
+        prepare_response_500();
+        prepare_response_index();
         if (mysql_query
             (&my, "SELECT * FROM ofpsvr_resources ORDER BY article_id")) {
                 WRITELOG("SELECT error: %s\n", mysql_error(&my));
@@ -361,16 +364,6 @@ int main(int argc, const char *argv[])
                 if (-1 == parsed_article_id) {
                         resource_ptr->next = resources;
                         resources = resource_ptr;
-                        if (0 == strcmp(resource_ptr->filename, "404.html")) {
-                                response_404 = resource_ptr->response;
-                        } else if (0 ==
-                                   strcmp(resource_ptr->filename, "500.html")) {
-                                response_500 = resource_ptr->response;
-                        } else if (0 ==
-                                   strcmp(resource_ptr->filename,
-                                          "index.html")) {
-                                response_index = resource_ptr->response;
-                        }
                 } else if (parsed_article_id >= 0
                            && parsed_article_id < articles_len) {
                         resource_ptr->next =
@@ -400,7 +393,7 @@ int main(int argc, const char *argv[])
         mysql_free_result(res_ptr);
         mysql_close(&my);
 
-        //4.Regenerating Articles
+        // 4. Regenerating Articles
         for (i = 0; i < articles_len; ++i) {
                 printf("Regenerating Aritcle #%d...", i);
                 fflush(stdout);
@@ -413,7 +406,7 @@ int main(int argc, const char *argv[])
         WRITELOG("Cache Size: %lf MB\n", (double)cache_size / 1000000);
         cache_size_silent = 0;
 
-        //5.Starting the daemon
+        // 5. Starting the daemon
         d = MHD_start_daemon(MHD_USE_THREAD_PER_CONNECTION, OFPSVR_VERSION,
                              NULL, NULL, &handler, NULL,
                              MHD_OPTION_NOTIFY_COMPLETED, request_completed,
@@ -434,7 +427,7 @@ int main(int argc, const char *argv[])
                 sleep(30);
         }
 
-        //6.Shutting down
+        // 6. Shutting down
         WRITELOG("OFPSVR.COM Server Shutting down\n");
         MHD_stop_daemon(d);
         WRITELOG("MHD Daemon stopped.\n");

@@ -22,12 +22,10 @@
 * [Check](http://check.sourceforge.net/)
 * [LCOV](http://ltp.sourceforge.net/coverage/lcov.php)
 
-如果您使用 Mac，可以可通过以下命令安装这些系统组件：
+如果您使用 Mac，可以通过以下命令安装这些系统组件：
 
 ```sh
-brew install libtool
-brew install autoconf
-brew install automake
+brew install libtool autoconf automake
 brew install mysql
 brew install gnutls
 brew install imagemagick
@@ -35,14 +33,15 @@ brew install check
 brew install lcov
 ```
 
-如果您使用 Ubuntu，可以可通过以下命令安装这些系统组件：
+如果您使用 Ubuntu，可以通过以下命令安装这些系统组件：
 
 ```sh
 sudo apt-get install libtool autoconf automake
 sudo apt-get install libmysqlclient-dev
 sudo apt-get install libssl-dev
 sudo apt-get install libgnutls-dev
-sudo apt-get install check lcov
+sudo apt-get install check
+sudo apt-get install lcov
 ```
 
 ## 编译安装
@@ -86,9 +85,9 @@ export OFPSVR_DB_DB=ofpsvr
 ofpsvr
 ```
 
-除了上述必须的环境变量外，还有下列可选的环境变量：
+除了上述必选的环境变量外，还有下列可选的环境变量：
 
-* `OFPSVR_DB_HOST`   - MySQL 主机
+* `todo`   - todo
 
 ## 代码风格
 

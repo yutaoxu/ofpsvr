@@ -30,7 +30,6 @@
 
 #include "ofpsvr.h"
 #include <openssl/md5.h>
-
 #define OFPSVR_HEADER1 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"\
              "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">"\
              "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" >"\
@@ -63,7 +62,7 @@
              "<td id=\"main\">"
 #define OFPSVR_FOOTER  "</td>"\
              "<td id=\"sidebar\"><ul>"\
-             "<li><h2>关于我</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"/img/me.jpg\" />大家好, 我叫 <strong>P.S.V.R</strong>, 目前在<a href=\"http://www.alibabagroup.com/\"><strong>阿里巴巴集团</strong></a>任资深开发工程师.<br>[ <a href=\"/\">返回首页</a> ]<br style=\"clear:both\" /><strong>曾用名</strong>: Pan 平底锅 试管牛<br /><strong>衍生名</strong>: 平底牛 试管锅 事故按钮 ...</div></li>"\
+             "<li><h2>关于我</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"/img/me.jpg\" />大家好, 我叫 <strong>P.S.V.R</strong>, 专注于研制模型清晰、易于使用、健壮可靠的高品质软件。<br style=\"clear:both\" /><strong>曾用名</strong>: Pan 平底锅 试管牛<br /><strong>衍生名</strong>: 平底牛 试管锅 事故按钮 ...</div></li>"\
              "<li><h2>订阅</h2><div class=\"body\"><a href=\"/blog.xml\"><img id=\"rss\" alt=\"rss\" width=\"200\" height=\"173\" src=\"/resources/rss.png\" /></a></div></li>"\
              "<li><h2>联系我</h2><div class=\"body\"><ul><li><img alt=\"address\" src=\"/resources/email.png\" /></li></ul></div></li>"\
              "</ul></td>"\
@@ -478,4 +477,95 @@ struct MHD_Response *generate_blog_response_rss()
         }
         assert(ret);
         return ret;
+}
+
+static struct MHD_Response *response_static_page(const char *content)
+{
+        struct MHD_Response *response;
+        if (!
+            (response =
+             MHD_create_response_from_data(strlen(content),
+                                           (void *)content, MHD_YES,
+                                           MHD_YES))) {
+                WRITELOG
+                    ("MHD_create_response_from_data failed at response_static_page.\n");
+                exit(EXIT_FAILURE);
+        }
+        if (MHD_NO ==
+            MHD_add_response_header(response,
+                                    MHD_HTTP_HEADER_CONTENT_TYPE,
+                                    "text/html")) {
+                WRITELOG
+                    ("MHD_add_response_header failed at response_static_page.\n");
+                exit(EXIT_FAILURE);
+        }
+        return response;
+}
+
+void prepare_response_404()
+{
+        response_404 = response_static_page("<!DOCTYPE html>"
+                                            "<html>"
+                                            "<head>"
+                                            "<meta charset=\"utf-8\">"
+                                            "<title>- 哎呀! -</title>"
+                                            "</head>"
+                                            "<body>"
+                                            "<h1>404 未找到</h1>"
+                                            "<p>"
+                                            "您请求的页面不存在。"
+                                            "</p>"
+                                            "<p>"
+                                            "<a href=\"/\">返回首页</a>"
+                                            "</p>" "</body>" "</html>");
+}
+
+void prepare_response_500()
+{
+        response_500 = response_static_page("<!DOCTYPE html>"
+                                            "<html>"
+                                            "<head>"
+                                            "<meta charset=\"utf-8\">"
+                                            "<title>- 哎呀! -</title>"
+                                            "</head>"
+                                            "<body>"
+                                            "<h1>500 内部服务器错误</h1>"
+                                            "<p>"
+                                            "P.S.V.R 的软件实验室的程序遇到了一个意外的内部错误，导致无法完成该请求。"
+                                            "</p><p>"
+                                            "对您造成的不便我们深感歉意！本错误已经被记录在案，我们将尽快调查解决。"
+                                            "</p>"
+                                            "<p>"
+                                            "<a href=\"/\">返回首页</a>"
+                                            "</p>" "</body>" "</html>");
+}
+
+void prepare_response_index()
+{
+        response_index = response_static_page("<!DOCTYPE html>"
+                                              "<html>"
+                                              "    <head>"
+                                              "        <meta charset=\"utf-8\">"
+                                              "        <meta http-equiv=\"x-ua-compatible\" content=\"ie=edge\">"
+                                              "        <title>P.S.V.R 的软件实验室</title>"
+                                              "        <meta name=\"description\" content=\"P.S.V.R 的软件实验室\">"
+                                              "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+                                              "        <link rel=\"apple-touch-icon\" href=\"apple-touch-icon.png\">"
+                                              "        <link rel=\"stylesheet\" href=\"css/ofpsvr.css\">"
+                                              "        <!--[if IE 6]><link rel=\"stylesheet\" type=\"text/css\" href=\"css/ie6.css\" /><![endif]-->"
+                                              "    </head>"
+                                              "    <body>"
+                                              "        <div class=\"i\">"
+                                              "            <a href=\"/blog\"><img src=\"img/index.png\" alt=\"P.S.V.R 的软件实验室\"></img></a>"
+                                              "            <p><a href=\"/blog\"><span class=\"welcome\">欢迎进入</span> P.S.V.R 的软件实验室</a></p>"
+                                              "        </div>"
+                                              "        <script>"
+                                              "            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){"
+                                              "            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),"
+                                              "            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)"
+                                              "            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');"
+                                              "            ga('create', 'UA-63776545-1', 'auto');"
+                                              "            ga('send', 'pageview');"
+                                              "        </script>"
+                                              "    </body>" "</html>");
 }

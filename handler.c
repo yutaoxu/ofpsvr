@@ -376,7 +376,7 @@ static int iterate_new_comment(void *coninfo_cls, enum MHD_ValueKind kind,
                 if (sanitize(&con_info->body) < 0)
                         return MHD_NO;
 
-                //________________store__________________
+                // ________________store__________________
                 MYSQL mm;
                 if (!mysql_init(&mm))
                         return MHD_NO;
@@ -453,21 +453,22 @@ static int iterate_new_comment(void *coninfo_cls, enum MHD_ValueKind kind,
                 assert(sql);
                 free(sql);
                 mysql_close(&mm);
-                //_______________________________________
+                // _______________________________________
 
                 if (!
                     (con_info->comment->content =
                      fill_content(con_info->name, con_info->email,
                                   con_info->website, con_info->body,
                                   con_info->posted_at,
-                                  articles[con_info->parsed_article_id]->
-                                  comment_count + 1))) {
+                                  articles[con_info->
+                                           parsed_article_id]->comment_count +
+                                  1))) {
                         return MHD_NO;
                 }
                 pthread_mutex_lock(&
                                    (articles
-                                    [con_info->parsed_article_id]->
-                                    comment_related_lock));
+                                    [con_info->
+                                     parsed_article_id]->comment_related_lock));
                 add_comment(articles[con_info->parsed_article_id],
                             con_info->comment);
                 if (!regenerate
@@ -477,8 +478,8 @@ static int iterate_new_comment(void *coninfo_cls, enum MHD_ValueKind kind,
                 }
                 pthread_mutex_unlock(&
                                      (articles
-                                      [con_info->parsed_article_id]->
-                                      comment_related_lock));
+                                      [con_info->
+                                       parsed_article_id]->comment_related_lock));
                 con_info->finished = 1;
                 return MHD_NO;
         } else {
@@ -516,7 +517,7 @@ int handler(void *cls, struct MHD_Connection *connection,
                 }
         }
 
-        if ('G' == method[0]) { //GET
+        if ('G' == method[0]) { // GET
                 switch (slash_count) {
                 case 1:
                         if ('\0' == u[1])       // "/"
@@ -566,19 +567,16 @@ int handler(void *cls, struct MHD_Connection *connection,
                                     && parsed_article_id < articles_len) {
                                         pthread_mutex_lock(&
                                                            (articles
-                                                            [parsed_article_id]->
-                                                            hit_related_lock));
-                                        ++articles[parsed_article_id]->
-                                            hit_count;
+                                                            [parsed_article_id]->hit_related_lock));
+                                        ++articles
+                                            [parsed_article_id]->hit_count;
                                         pthread_mutex_unlock(&
                                                              (articles
-                                                              [parsed_article_id]->
-                                                              hit_related_lock));
+                                                              [parsed_article_id]->hit_related_lock));
                                         return MHD_queue_response(connection,
                                                                   MHD_HTTP_OK,
                                                                   articles
-                                                                  [parsed_article_id]->
-                                                                  response);
+                                                                  [parsed_article_id]->response);
                                 } else {
                                         return OFPSVR_Q_404;
                                 }
@@ -593,8 +591,7 @@ int handler(void *cls, struct MHD_Connection *connection,
                                 if (resource_ptr)
                                         return MHD_queue_response(connection,
                                                                   MHD_HTTP_OK,
-                                                                  resource_ptr->
-                                                                  response);
+                                                                  resource_ptr->response);
                                 else
                                         return OFPSVR_Q_404;
                         }
@@ -628,15 +625,14 @@ int handler(void *cls, struct MHD_Connection *connection,
                         if (resource_ptr)
                                 return MHD_queue_response(connection,
                                                           MHD_HTTP_OK,
-                                                          resource_ptr->
-                                                          response);
+                                                          resource_ptr->response);
                         else
                                 return OFPSVR_Q_404;
                 default:
                         return OFPSVR_Q_404;
                 }
                 return OFPSVR_Q_404;
-        } else                  //POST
+        } else                  // POST
         {
                 struct connection_info_struct *con_info;
                 switch (slash_count) {

@@ -163,6 +163,10 @@ char *fill_content(char *name,char *email,char *website,char *body, long posted_
 
 int regenerate(struct Article *x,int id);
 
+void prepare_response_404();
+void prepare_response_500();
+void prepare_response_index();
+
 struct MHD_Response *generate_blog_response();
 struct MHD_Response *generate_blog_response_rss();
 

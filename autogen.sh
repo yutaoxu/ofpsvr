@@ -26,20 +26,6 @@ AUTOHEADER=${AUTOHEADER:-autoheader}
 AUTOMAKE=${AUTOMAKE:-automake}
 LIBTOOLIZE=${LIBTOOLIZE:-libtoolize}
 
-automake_version=`"$AUTOMAKE" --version | head -n 1 | sed 's/[^.0-9]//g'`
-automake_version_major=`echo "$automake_version" | cut -d. -f1`
-automake_version_minor=`echo "$automake_version" | cut -d. -f2`
-
-OFPSVR_EXTRA_AUTOMAKE_FLAGS=
-if test "$automake_version_major" -gt 1 || \
-   test "$automake_version_major" -eq 1 && \
-   test "$automake_version_minor" -gt 11; then
-  # serial-tests is available in v0.12 and newer.
-  OFPSVR_EXTRA_AUTOMAKE_FLAGS="$OFPSVR_EXTRA_AUTOMAKE_FLAGS serial-tests"
-fi
-echo "m4_define([OFPSVR_EXTRA_AUTOMAKE_FLAGS], [$OFPSVR_EXTRA_AUTOMAKE_FLAGS])" \
-    > m4/ofpsvr_gitignore.m4
-
 set -ex
 "$LIBTOOLIZE"
 "$ACLOCAL" -I m4

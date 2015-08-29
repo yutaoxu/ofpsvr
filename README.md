@@ -71,15 +71,24 @@ sudo make install
 * `OFPSVR_DB_PASSWD` - MySQL 密码
 * `OFPSVR_DB_DB`     - MySQL 数据库名
 
-在这些环境变量之下用根用户执行 `ofpsvr` 即可，例如：
+例如：
 
 ```sh
 export OFPSVR_DB_HOST=127.0.0.1
 export OFPSVR_DB_USER=user1
 export OFPSVR_DB_PASSWD=secret
 export OFPSVR_DB_DB=ofpsvr
+```
+
+在这些环境变量之下执行 `ofpsvr` 即可：
+
+```sh
 ofpsvr
 ```
+
+除了上述必须的环境变量外，还有下列可选的环境变量：
+
+* `OFPSVR_DB_HOST`   - MySQL 主机
 
 ## 代码风格
 

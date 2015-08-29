@@ -7,11 +7,8 @@ AC_INIT(
   [https://github.com/pmq20/ofpsvr])
 : ${CFLAGS=""}
 AC_CONFIG_MACRO_DIR([m4])
-m4_include([m4/headers.m4])
-m4_include([m4/ofpsvr_gitignore.m4])
-AC_COPYRIGHT([Copyright (c) 2015 P.S.V.R])
-AM_INIT_AUTOMAKE(
-  [-Wall -Werror foreign subdir-objects] OFPSVR_EXTRA_AUTOMAKE_FLAGS)
+AC_COPYRIGHT([Copyright (C) 2009-2015  P.S.V.R])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_CONFIG_SRCDIR([main.c])
 AC_CONFIG_HEADERS([config.h])
 

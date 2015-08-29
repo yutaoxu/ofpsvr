@@ -30,6 +30,8 @@
 
 #include "ofpsvr.h"
 
+char *asset_host = "";
+
 struct Article **articles;
 int articles_len;
 

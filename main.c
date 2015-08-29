@@ -31,7 +31,6 @@
 #include "ofpsvr.h"
 
 jmp_buf main_loop;
-char *asset_host;
 
 static char *utime2rfctime(long u)
 {

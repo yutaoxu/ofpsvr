@@ -309,6 +309,7 @@ int main(int argc, const char *argv[])
         prepare_response_404();
         prepare_response_500();
         prepare_response_index();
+        prepare_response_favicon();
         if (mysql_query
             (&my, "SELECT * FROM ofpsvr_resources ORDER BY article_id")) {
                 WRITELOG("SELECT error: %s\n", mysql_error(&my));
@@ -383,18 +384,12 @@ int main(int argc, const char *argv[])
                 }
                 printf("OK(%lfKB)\n", (double)(lengths[4]) / 1000);
         }
-        if (!response_404) {
-                WRITELOG("Please provide a 404.html resource for root.\n");
-                return EXIT_FAILURE;
-        }
-        if (!response_500) {
-                WRITELOG("Please provide a 500.html resource for root.\n");
-                return EXIT_FAILURE;
-        }
-        if (!response_index) {
-                WRITELOG("Please provide a index.html resource for root.\n");
-                return EXIT_FAILURE;
-        }
+
+        assert(response_404);
+        assert(response_500);
+        assert(response_index);
+        assert(response_favicon);
+        
         mysql_free_result(res_ptr);
         mysql_close(&my);
 

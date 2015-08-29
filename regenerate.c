@@ -30,13 +30,14 @@
 
 #include "ofpsvr.h"
 #include <openssl/md5.h>
+
 #define OFPSVR_HEADER1 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"\
              "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">"\
              "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" >"\
              "<head>"\
              "<meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\" />"\
-             "<link href=\"/resources/master.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />"\
-             "<script src=\"/resources/master.js\" type=\"text/javascript\"></script>"\
+             "<link href=\"%s/css/master.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />"\
+             "<script id=\"master_js\" src=\"%s/js/master.js\" type=\"text/javascript\"></script>"\
              "<script type=\"text/x-mathjax-config\">"\
                "MathJax.Hub.Config({"\
                "  tex2jax: {"\
@@ -55,16 +56,16 @@
              "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"
 #define OFPSVR_HEADER2 "</head>"\
              "<body>"\
-             "<a href=\"https://github.com/pmq20/ofpsvr\"><img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png\" alt=\"Fork me on GitHub\"></a>"\
-             "<div id=\"top\"><div id=\"logo\"><a href=\"/blog\"><img alt=\"Logo\" src=\"/resources/logo.png\" /></a><a href=\"/blog\"><img alt=\"Logo\" src=\"/resources/logo2.png\" /></a></div></div>"\
+             "<a href=\"https://github.com/pmq20/ofpsvr\"><img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"%s/img/forkme.png\" alt=\"Fork me on GitHub\"></a>"\
+             "<div id=\"top\"><div id=\"logo\"><a href=\"/blog\"><img alt=\"Logo\" src=\"%s/img/logo.png\" /></a><a href=\"/blog\"><img alt=\"Logo\" src=\"%s/img/logo2.png\" /></a></div></div>"\
              "<table id=\"content\"><tr>"\
              "<!-- ======Content====== -->"\
              "<td id=\"main\">"
 #define OFPSVR_FOOTER  "</td>"\
              "<td id=\"sidebar\"><ul>"\
              "<li><h2>关于我</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"%s/img/me.jpg\" />大家好, 我叫 <strong>P.S.V.R</strong>, 专注于开发健壮可靠、易于使用、文档清晰的高品质软件。<br style=\"clear:both\" /><strong>曾用名</strong>: Pan 平底锅 试管牛<br /><strong>衍生名</strong>: 平底牛 试管锅 事故按钮 ...</div></li>"\
-             "<li><h2>订阅</h2><div class=\"body\"><a href=\"/blog.xml\"><img id=\"rss\" alt=\"rss\" width=\"200\" height=\"173\" src=\"/resources/rss.png\" /></a></div></li>"\
-             "<li><h2>联系我</h2><div class=\"body\"><ul><li><img alt=\"address\" src=\"/resources/email.png\" /></li></ul></div></li>"\
+             "<li><h2>订阅</h2><div class=\"body\"><a href=\"/blog.xml\"><img id=\"rss\" alt=\"rss\" width=\"200\" height=\"173\" src=\"%s/img/rss.png\" /></a></div></li>"\
+             "<li><h2>联系我</h2><div class=\"body\"><ul><li><img alt=\"address\" src=\"%s/img/email.png\" /></li></ul></div></li>"\
              "</ul></td>"\
              "<!-- ======Content====== -->"\
              "</tr></table>"\
@@ -230,7 +231,9 @@ int regenerate(struct Article *x, int id)
                      "</tr>"
                      "</thead>"
                      "<tbody>",
+                     asset_host, asset_host, /* OFPSVR_HEADER1 */
                      x->title,
+                     asset_host, asset_host, asset_host, /* OFPSVR_HEADER2 */
                      x->title, x->posted_at, x->body, x->resource_count) < 0) {
                 return 0;
         }
@@ -289,7 +292,9 @@ int regenerate(struct Article *x, int id)
                      "<label for=\"url\">您的网站（可选）</label></p>"
                      "<p><textarea tabindex=\"4\" rows=\"5\" cols=\"100\" id=\"comment\" name=\"reply[body]\"></textarea></p>"
                      "<p><input type=\"submit\" value=\"提交评论\" tabindex=\"5\" id=\"submit\" name=\"commit\"/></p>"
-                     "</form>" OFPSVR_FOOTER, old, asset_host) < 0) {
+                     "</form>" OFPSVR_FOOTER, old,
+                     asset_host, asset_host, asset_host /* OFPSVR_FOOTER */
+                     ) < 0) {
                 return 0;
         }
         assert(old);
@@ -355,7 +360,10 @@ struct MHD_Response *generate_blog_response()
         char *page, *old;
         if (asprintf(&page,
                      OFPSVR_HEADER1
-                     "<title>Blog Of P.S.V.R</title>" OFPSVR_HEADER2) < 0) {
+                     "<title>Blog Of P.S.V.R</title>" OFPSVR_HEADER2,
+                     asset_host, asset_host, /* OFPSVR_HEADER1 */
+                     asset_host, asset_host, asset_host /* OFPSVR_HEADER2 */
+                     ) < 0) {
                 return NULL;
         }
         int i;
@@ -405,7 +413,9 @@ struct MHD_Response *generate_blog_response()
                 free(resource_count_str);
         }
         old = page;
-        if (asprintf(&page, "%s" OFPSVR_FOOTER, old, asset_host) < 0) {
+        if (asprintf(&page, "%s" OFPSVR_FOOTER, old,
+                     asset_host, asset_host, asset_host /* OFPSVR_FOOTER */
+                     ) < 0) {
                 return NULL;
         }
         assert(old);
@@ -576,4 +586,26 @@ void prepare_response_index()
         }
         
         response_index = response_static_page(page);
+}
+
+void prepare_response_favicon()
+{
+        if (!
+            (response_favicon =
+             MHD_create_response_from_data(favicon_ico_len,
+                                           (void *)favicon_ico, MHD_YES,
+                                           MHD_YES))) {
+                WRITELOG
+                    ("MHD_create_response_from_data failed at prepare_response_favicon.\n");
+                exit(EXIT_FAILURE);
+        }
+        if (MHD_NO ==
+            MHD_add_response_header(response_favicon,
+                                    MHD_HTTP_HEADER_CONTENT_TYPE,
+                                    "image/x-icon")) {
+                WRITELOG
+                    ("MHD_add_response_header failed at prepare_response_favicon.\n");
+                exit(EXIT_FAILURE);
+        }
+        
 }

@@ -19,7 +19,8 @@ libofpsvr_la_SOURCES   = handler.c                                            \
                          mrb_funcs.c                                          \
                          utils.c                                              \
                          errors.c                                             \
-                         regenerate.c
+                         regenerate.c                                         \
+                         favicon.c
 
 bin_PROGRAMS           = ofpsvr
 ofpsvr_LDADD           = libofpsvr.la                                         \

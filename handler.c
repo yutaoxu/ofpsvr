@@ -38,6 +38,7 @@ struct Resource *resources;
 struct MHD_Response *response_404;
 struct MHD_Response *response_500;
 struct MHD_Response *response_index;
+struct MHD_Response *response_favicon;
 
 unsigned long cache_size;
 int cache_size_silent;
@@ -551,6 +552,10 @@ int handler(void *cls, struct MHD_Connection *connection,
                                 }
                                 MHD_destroy_response(response);
                                 return ret;
+                        } else if (strstr(u, "/favicon") == u) {   // "/favicon";
+                                return MHD_queue_response(connection,
+                                                          MHD_HTTP_OK,
+                                                          response_favicon);
                         }
                         break;
                 case 2:

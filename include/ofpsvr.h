@@ -149,6 +149,10 @@ extern struct Resource *resources;
 extern struct MHD_Response *response_404;
 extern struct MHD_Response *response_500;
 extern struct MHD_Response *response_index;
+extern struct MHD_Response *response_favicon;
+
+extern unsigned char favicon_ico[];
+extern unsigned int favicon_ico_len;
 
 extern unsigned long cache_size;
 extern int cache_size_silent;
@@ -168,6 +172,7 @@ int regenerate(struct Article *x,int id);
 void prepare_response_404();
 void prepare_response_500();
 void prepare_response_index();
+void prepare_response_favicon();
 
 struct MHD_Response *generate_blog_response();
 struct MHD_Response *generate_blog_response_rss();

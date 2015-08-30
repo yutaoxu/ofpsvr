@@ -71,14 +71,6 @@
              "</tr></table>"\
              "<div id=\"foot\"><p style=\"font-size: 12px;\">本站由 <a href=\"https://github.com/pmq20/ofpsvr\">ofpsvr v8.9.0.2</a> 强力驱动.</p>"\
              "<div id=\"foot2\"></div></div>"\
-             "<script type=\"text/javascript\">"\
-             "  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){"\
-             "  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),"\
-             "  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)"\
-             "  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');"\
-             "  ga('create', 'UA-45613300-2', 'ofpsvr.org');"\
-             "  ga('send', 'pageview');"\
-             "</script>"\
              "</body>"\
              "</html>"
 #define OFPSVR_RSS_HEADER "<?xml version=\"1.0\"?>"\

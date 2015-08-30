@@ -101,3 +101,18 @@ void substantiate()
         }
         mysql_close(&my);
 }
+
+char *ofpsvr_timestr(long now)
+{
+        struct tm ts;
+        char *buf;
+        // Adjust to +8 Beijing TZ
+        now += 28800;
+        if (!(buf = malloc(200))) {
+                WRITELOG("malloc in ofpsvr_timestr failed!\n");
+                exit(EXIT_FAILURE);
+        }
+        gmtime_r(&now, &ts);
+        strftime(buf, 200, "%Y年%-m月%-d日 %H:%M:%S", &ts);
+        return buf;
+}

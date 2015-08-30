@@ -181,6 +181,9 @@ void request_completed (void *cls, struct MHD_Connection *connection,
 void terminate();
 void substantiate();
 
+// Utilities
+// Caller must free the returned buffer
+char *ofpsvr_timestr(long now);
 MYSQL *ofpsvr_real_connect(MYSQL *mysql);
 
 /* error */

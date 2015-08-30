@@ -133,6 +133,7 @@ char *fill_content(char *name, char *email, char *website, char *body,
                 return NULL;
         }
         if (posted_at % 2) {
+                char *tmp_timestr = ofpsvr_timestr(posted_at);
                 if (asprintf(&ret,
                              "<table class=\"a_comment\"><tr>"
                              "<td class=\"author author0\">"
@@ -141,7 +142,7 @@ char *fill_content(char *name, char *email, char *website, char *body,
                              "</td>"
                              "<td class=\"commentbody\">"
                              "<div class=\"info\"><div class=\"info2\">"
-                             "<div class=\"date\">发表于 %ld (Unix time) | #%d</div>"
+                             "<div class=\"date\">发表于 %s | #%d</div>"
                              "<div class=\"maininfo\"><div class=\"maininfo2\"><p>%s</p></div></div>"
                              "</div></div>"
                              "</td>"
@@ -153,15 +154,17 @@ char *fill_content(char *name, char *email, char *website, char *body,
                              (website) ? "\">" : "",
                              name,
                              (website) ? "</a>" : "",
-                             posted_at, number, body) < 0) {
+                             tmp_timestr, number, body) < 0) {
                         return NULL;
                 }
+                free(tmp_timestr);
         } else {
+                char *tmp_timestr = ofpsvr_timestr(posted_at);
                 if (asprintf(&ret,
                              "<table class=\"a_comment\"><tr>"
                              "<td class=\"commentbody\">"
                              "<div class=\"info\"><div class=\"info2\">"
-                             "<div class=\"date\">发表于 %ld (Unix time) | #%d</div>"
+                             "<div class=\"date\">发表于 %s | #%d</div>"
                              "<div class=\"maininfo\"><div class=\"maininfo2\"><p>%s</p></div></div>"
                              "</div></div>"
                              "</td>"
@@ -170,7 +173,7 @@ char *fill_content(char *name, char *email, char *website, char *body,
                              "<div class=\"name\">%s%s%s%s%s</div>"
                              "</td>"
                              "</tr></table>",
-                             posted_at, number,
+                             tmp_timestr, number,
                              body,
                              name,
                              email_md5,
@@ -180,6 +183,7 @@ char *fill_content(char *name, char *email, char *website, char *body,
                              name, (website) ? "</a>" : "") < 0) {
                         return NULL;
                 }
+                free(tmp_timestr);
         }
         assert(email_md5);
         free(email_md5);
@@ -203,6 +207,7 @@ int regenerate(struct Article *x, int id)
                              (running ? "\n" : "..."));
         }
         char *page, *old;
+        char *tmp_timestr = ofpsvr_timestr(x->posted_at);
         if (asprintf(&page,
                      OFPSVR_HEADER1
                      "<title>%s - Blog Of P.S.V.R</title>"
@@ -211,7 +216,7 @@ int regenerate(struct Article *x, int id)
                      "<td class=\"post_bubble\"></td>"
                      "<td class=\"post_header\">"
                      "<h2 class=\"title\">%s</h2>"
-                     "<p class=\"byline\">发表于 %ld (Unix time)</p>"
+                     "<p class=\"byline\">发表于 %s</p>"
                      "</td>"
                      "</tr><tr>"
                      "<td colspan=\"2\" class=\"post_body\">"
@@ -234,9 +239,10 @@ int regenerate(struct Article *x, int id)
                      asset_host, asset_host, /* OFPSVR_HEADER1 */
                      x->title,
                      asset_host, asset_host, asset_host, /* OFPSVR_HEADER2 */
-                     x->title, x->posted_at, x->body, x->resource_count) < 0) {
+                     x->title, tmp_timestr, x->body, x->resource_count) < 0) {
                 return 0;
         }
+        free(tmp_timestr);
         struct Resource *resource_ptr;
         int cnt = 0;
         for (resource_ptr = x->resources; resource_ptr;
@@ -379,6 +385,7 @@ struct MHD_Response *generate_blog_response()
                     (resource_count_str =
                      count2str(articles[i]->resource_count)))
                         return NULL;
+                char* tmp_timestr = ofpsvr_timestr(articles[i]->posted_at);
                 if (asprintf(&page, "%s"
                              "<table class=\"post\"><tr>"
                              "<td class=\"post_boxes\">"
@@ -388,7 +395,7 @@ struct MHD_Response *generate_blog_response()
                              "</td>"
                              "<td class=\"post_header\">"
                              "<h2 class=\"title\"><a href=\"/blog/%d\">%s</a></h2>"
-                             "<p class=\"byline\">发表于 %ld (Unix time) | #%d</p>"
+                             "<p class=\"byline\">发表于 %s | #%d</p>"
                              "</td>"
                              "</tr><tr>"
                              "<td colspan=\"2\" class=\"post_body\">"
@@ -399,10 +406,11 @@ struct MHD_Response *generate_blog_response()
                              hit_count_str,
                              count2bgcolor(articles[i]->comment_count),
                              comment_count_str, resource_count_str, i,
-                             articles[i]->title, articles[i]->posted_at, i,
+                             articles[i]->title, tmp_timestr, i,
                              articles[i]->introduction) < 0) {
                         return NULL;
                 }
+                free(tmp_timestr);
                 assert(old);
                 free(old);
                 assert(hit_count_str);

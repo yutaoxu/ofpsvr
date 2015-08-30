@@ -51,7 +51,12 @@ after_success:
   - git clean -xdf
   - git check-ignore -v *
   - git status
+  - export OFPSVR_NIGHT=`./scripts/night`
+  - mkdir $TRAVIS_BUILD_DIR/tmp
+  - echo $TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT
+  - mkdir $TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT
   - sh autogen.sh
-  - ./configure
+  - ./configure --prefix=$TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT
   - make
   - make check
+  - make install

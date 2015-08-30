@@ -186,6 +186,12 @@ void substantiate();
 char *ofpsvr_timestr(long now);
 MYSQL *ofpsvr_real_connect(MYSQL *mysql);
 
+// Captcha
+extern const int gifsize;
+void captcha(unsigned char im[70*200], unsigned char l[6]);
+void makegif(unsigned char im[70*200], unsigned char gif[gifsize]);
+struct MHD_Response *generate_response_captcha();
+
 /* error */
 void ofpsvr_fatal(int errono);
 void ofpsvr_location_stderr(const char* file, int line);

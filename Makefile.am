@@ -21,12 +21,15 @@ libofpsvr_la_SOURCES   = handler.c                                            \
 
 bin_PROGRAMS           = ofpsvr
 ofpsvr_LDADD           = libofpsvr.la                                         \
+                         $(top_srcdir)/deps/captcha/libcaptcha.o              \
                          $(top_srcdir)/deps/libmicrohttpd/src/microhttpd/.libs/libmicrohttpd.a
 ofpsvr_SOURCES         = main.c
 
 TESTS                  = test/run
 check_PROGRAMS         = test/run
-test_run_LDADD         = libofpsvr.la -lcheck                                 \
+test_run_LDADD         = -lcheck                                              \
+                         libofpsvr.la                                         \
+                         $(top_srcdir)/deps/captcha/libcaptcha.o              \
                          $(top_srcdir)/deps/libmicrohttpd/src/microhttpd/.libs/libmicrohttpd.a
 test_run_SOURCES       = test/errors_test.c                                   \
                          test/run.c

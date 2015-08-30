@@ -497,7 +497,7 @@ static struct MHD_Response *response_static_page(const char *content)
             (response =
              MHD_create_response_from_data(strlen(content),
                                            (void *)content, MHD_NO,
-                                           MHD_YES))) {
+                                           MHD_NO))) {
                 WRITELOG
                     ("MHD_create_response_from_data failed at response_static_page.\n");
                 exit(EXIT_FAILURE);
@@ -515,6 +515,8 @@ static struct MHD_Response *response_static_page(const char *content)
 
 void prepare_response_404()
 {
+        if(NULL != response_404)
+                return;
         response_404 = response_static_page("<!DOCTYPE html>"
                                             "<html>"
                                             "<head>"
@@ -533,6 +535,8 @@ void prepare_response_404()
 
 void prepare_response_500()
 {
+        if(NULL != response_500)
+                return;
         response_500 = response_static_page("<!DOCTYPE html>"
                                             "<html>"
                                             "<head>"
@@ -553,7 +557,10 @@ void prepare_response_500()
 
 void prepare_response_index()
 {
+        if(NULL != response_index)
+                return;
         char *page;
+        // Mem `page` should never be freed
         if (asprintf(&page,
                      "<!DOCTYPE html>"
                      "<html>"
@@ -586,16 +593,17 @@ void prepare_response_index()
                 exit(EXIT_FAILURE);
         }
         response_index = response_static_page(page);
-        free(page);
 }
 
 void prepare_response_favicon()
 {
+        if(NULL != response_favicon)
+                return;
         if (!
             (response_favicon =
              MHD_create_response_from_data(favicon_ico_len,
-                                           (void *)favicon_ico, MHD_YES,
-                                           MHD_YES))) {
+                                           (void *)favicon_ico, MHD_NO,
+                                           MHD_NO))) {
                 WRITELOG
                     ("MHD_create_response_from_data failed at prepare_response_favicon.\n");
                 exit(EXIT_FAILURE);
@@ -609,4 +617,42 @@ void prepare_response_favicon()
                 exit(EXIT_FAILURE);
         }
         
+}
+
+struct MHD_Response *generate_response_captcha()
+{
+        unsigned char l[6];
+        unsigned char im[70*200];
+        unsigned char *gif;
+        struct MHD_Response *response_captcha;
+        
+        if(!(gif = malloc(gifsize * sizeof(unsigned char))))
+        {
+                WRITELOG
+                    ("malloc failed at generate_response_captcha.\n");
+                exit(EXIT_FAILURE);
+        }
+        
+        captcha(im,l);
+        makegif(im,gif);
+        
+        if (!
+            (response_captcha =
+             MHD_create_response_from_data(gifsize,
+                                           (void *)gif, MHD_YES,
+                                           MHD_NO))) {
+                WRITELOG
+                    ("MHD_create_response_from_data failed at generate_response_captcha.\n");
+                exit(EXIT_FAILURE);
+        }
+        if (MHD_NO ==
+            MHD_add_response_header(response_captcha,
+                                    MHD_HTTP_HEADER_CONTENT_TYPE,
+                                    "image/gif")) {
+                WRITELOG
+                    ("MHD_add_response_header failed at generate_response_captcha.\n");
+                exit(EXIT_FAILURE);
+        }
+
+        return response_captcha;
 }

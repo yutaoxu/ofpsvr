@@ -39,10 +39,10 @@ int articles_len;
 
 struct Resource *resources;
 
-struct MHD_Response *response_404;
-struct MHD_Response *response_500;
-struct MHD_Response *response_index;
-struct MHD_Response *response_favicon;
+struct MHD_Response *response_404 = NULL;
+struct MHD_Response *response_500 = NULL;
+struct MHD_Response *response_index = NULL;
+struct MHD_Response *response_favicon = NULL;
 
 unsigned long cache_size;
 int cache_size_silent;
@@ -514,10 +514,17 @@ int handler(void *cls, struct MHD_Connection *connection,
                                 }
                                 MHD_destroy_response(response);
                                 return ret;
-                        } else if (strstr(u, "/favicon") == u) {   // "/favicon";
+                        } else if (strstr(u, "/favicon") == u) {
+                                // /favicon.ico
                                 return MHD_queue_response(connection,
                                                           MHD_HTTP_OK,
                                                           response_favicon);
+                        } else if (strstr(u, "/captcha") == u) {
+                                // /captcha.gif
+                                return MHD_queue_response(connection,
+                                                          MHD_HTTP_OK,
+                                                          generate_response_captcha());
+                                return 0;
                         }
                         break;
                 case 2:

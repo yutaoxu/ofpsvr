@@ -122,8 +122,9 @@ int main(int argc, const char *argv[])
 
         WRITELOG("___________________OFPSVR.COM_____________________\n");
         WRITELOG("Version %d\n", OFPSVR_VERSION);
-        WRITELOG("Written by P.S.V.R\n");
         WRITELOG("Compiled with libmicrohttpd version %x\n", MHD_VERSION);
+        WRITELOG("libcaptcha gifsize=%d\n", gifsize);
+        WRITELOG("Written by P.S.V.R\n");
         WRITELOG("__________________________________________________\n\n");
 
         MYSQL my;

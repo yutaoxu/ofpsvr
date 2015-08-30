@@ -1,6 +1,5 @@
 SUBDIRS                = deps/captcha                                         \
-                         deps/libmicrohttpd                                   \
-                         regenerators
+                         deps/libmicrohttpd
 
 ACLOCAL_AMFLAGS        = -I m4
 
@@ -18,9 +17,7 @@ libofpsvr_la_SOURCES   = handler.c                                            \
                          utils.c                                              \
                          errors.c                                             \
                          regenerate.c                                         \
-                         favicon.c                                            \
-                         regenerators/404.c                                   \
-                         regenerators/500.c
+                         favicon.c
 
 bin_PROGRAMS           = ofpsvr
 ofpsvr_LDADD           = libofpsvr.la                                         \

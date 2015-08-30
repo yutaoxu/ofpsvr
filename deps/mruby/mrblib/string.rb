@@ -12,36 +12,12 @@ class String
   def each_line(&block)
     # expect that str.index accepts an Integer for 1st argument as a byte data
     offset = 0
-    while pos = self.index(0x0a, offset)
+    while(pos = self.index(0x0a, offset))
       block.call(self[offset, pos + 1 - offset])
       offset = pos + 1
     end
     block.call(self[offset, self.size - offset]) if self.size > offset
     self
-  end
-
-  # private method for gsub/sub
-  def __sub_replace(pre, m, post)
-    s = ""
-    i = 0
-    while j = index("\\", i)
-      break if j == length-1
-      t = case self[j+1]
-          when "\\"
-            "\\"
-          when "`"
-            pre
-          when "&", "0"
-            m
-          when "'"
-            post
-          else
-            self[j, 2]
-          end
-      s += self[i, j-i] + t
-      i = j + 2
-    end
-    s + self[i, length-i]
   end
 
   ##
@@ -53,17 +29,7 @@ class String
   # ISO 15.2.10.5.18
   def gsub(*args, &block)
     if args.size == 2
-      s = ""
-      i = 0
-      while j = index(args[0], i)
-        seplen = args[0].length
-        k = j + seplen
-        pre = self[0, j]
-        post = self[k, length-k]
-        s += self[i, j-i] + args[1].__sub_replace(pre, args[0], post)
-        i = k
-      end
-      s + self[i, length-i]
+      split(args[0], -1).join(args[1])
     elsif args.size == 1 && block
       split(args[0], -1).join(block.call(args[0]))
     else
@@ -110,8 +76,7 @@ class String
   # ISO 15.2.10.5.36
   def sub(*args, &block)
     if args.size == 2
-      pre, post = split(args[0], 2)
-      pre + args[1].__sub_replace(pre, args[0], post) + post
+      split(args[0], 2).join(args[1])
     elsif args.size == 1 && block
       split(args[0], 2).join(block.call(args[0]))
     else
@@ -141,7 +106,7 @@ class String
   # +self+.
   def each_char(&block)
     pos = 0
-    while pos < self.size
+    while(pos < self.size)
       block.call(self[pos])
       pos += 1
     end
@@ -153,7 +118,7 @@ class String
   def each_byte(&block)
     bytes = self.bytes
     pos = 0
-    while pos < bytes.size
+    while(pos < bytes.size)
       block.call(bytes[pos])
       pos += 1
     end
@@ -164,9 +129,6 @@ class String
   # Modify +self+ by replacing the content of +self+
   # at the position +pos+ with +value+.
   def []=(pos, value)
-    if pos < 0
-      pos += self.length
-    end
     b = self[0, pos]
     a = self[pos+1..-1]
     self.replace([b, value, a].join(''))
@@ -184,16 +146,7 @@ class String
   ##
   # ISO 15.2.10.5.27
   def match(re, &block)
-    if re.respond_to? :to_str
-      if Object.const_defined?(:Regexp)
-        r = Regexp.new(re)
-        r.match(self, &block)
-      else
-        raise NotImplementedError, "String#match needs Regexp class"
-      end
-    else
-      re.match(self, &block)
-    end
+    re.match(self, &block)
   end
 end
 

@@ -9,6 +9,16 @@
 #define RITEBIN_EXT ".mrb"
 #define C_EXT       ".c"
 
+#if defined(__cplusplus)
+extern "C" {
+void mrb_show_version(mrb_state *);
+void mrb_show_copyright(mrb_state *);
+}
+#else
+void mrb_show_version(mrb_state *);
+void mrb_show_copyright(mrb_state *);
+#endif
+
 struct mrbc_args {
   int argc;
   char **argv;
@@ -18,7 +28,7 @@ struct mrbc_args {
   const char *initname;
   mrb_bool check_syntax : 1;
   mrb_bool verbose      : 1;
-  unsigned int flags    : 4;
+  mrb_bool debug_info   : 1;
 };
 
 static void
@@ -31,8 +41,6 @@ usage(const char *name)
   "-v           print version number, then turn on verbose mode",
   "-g           produce debugging information",
   "-B<symbol>   binary <symbol> output in C language format",
-  "-e           generate little endian iseq data",
-  "-E           generate big endian iseq data",
   "--verbose    run at verbose mode",
   "--version    print the version",
   "--copyright  print the copyright",
@@ -116,13 +124,7 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct mrbc_args *args)
         args->verbose = TRUE;
         break;
       case 'g':
-        args->flags |= DUMP_DEBUG_INFO;
-        break;
-      case 'E':
-        args->flags = DUMP_ENDIAN_BIG | (args->flags & DUMP_DEBUG_INFO);
-        break;
-      case 'e':
-        args->flags = DUMP_ENDIAN_LIL | (args->flags & DUMP_DEBUG_INFO);
+        args->debug_info = TRUE;
         break;
       case 'h':
         return -1;
@@ -150,10 +152,6 @@ parse_args(mrb_state *mrb, int argc, char **argv, struct mrbc_args *args)
     else {
       break;
     }
-  }
-  if (args->verbose && args->initname && (args->flags & DUMP_ENDIAN_MASK) == 0) {
-    fprintf(stderr, "%s: generating %s endian C file. specify -e/-E for cross compiling.\n",
-            args->prog, bigendian_p() ? "big" : "little");
   }
   return i;
 }
@@ -234,13 +232,13 @@ dump_file(mrb_state *mrb, FILE *wfp, const char *outfile, struct RProc *proc, st
   mrb_irep *irep = proc->body.irep;
 
   if (args->initname) {
-    n = mrb_dump_irep_cfunc(mrb, irep, args->flags, wfp, args->initname);
+    n = mrb_dump_irep_cfunc(mrb, irep, args->debug_info, wfp, args->initname);
     if (n == MRB_DUMP_INVALID_ARGUMENT) {
       fprintf(stderr, "%s: invalid C language symbol name\n", args->initname);
     }
   }
   else {
-    n = mrb_dump_irep_binary(mrb, irep, args->flags, wfp);
+    n = mrb_dump_irep_binary(mrb, irep, args->debug_info, wfp);
   }
   if (n != MRB_DUMP_OK) {
     fprintf(stderr, "%s: error in mrb dump (%s) %d\n", args->prog, outfile, n);

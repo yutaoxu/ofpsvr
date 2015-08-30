@@ -4,6 +4,7 @@
 ** See Copyright Notice in mruby.h
 */
 
+#include <ctype.h>
 #include <stdarg.h>
 #include "mruby.h"
 #include "mruby/array.h"
@@ -131,19 +132,6 @@ mrb_class_outer_module(mrb_state *mrb, struct RClass *c)
   return mrb_class_ptr(outer);
 }
 
-static void
-check_if_class_or_module(mrb_state *mrb, mrb_value obj)
-{
-  switch (mrb_type(obj)) {
-  case MRB_TT_CLASS:
-  case MRB_TT_SCLASS:
-  case MRB_TT_MODULE:
-    return;
-  default:
-    mrb_raisef(mrb, E_TYPE_ERROR, "%S is not a class/module", mrb_inspect(mrb, obj));
-  }
-}
-
 static struct RClass*
 define_module(mrb_state *mrb, mrb_sym name, struct RClass *outer)
 {
@@ -173,7 +161,6 @@ mrb_define_module(mrb_state *mrb, const char *name)
 MRB_API struct RClass*
 mrb_vm_define_module(mrb_state *mrb, mrb_value outer, mrb_sym id)
 {
-  check_if_class_or_module(mrb, outer);
   return define_module(mrb, id, mrb_class_ptr(outer));
 }
 
@@ -212,7 +199,7 @@ MRB_API struct RClass*
 mrb_define_class_id(mrb_state *mrb, mrb_sym name, struct RClass *super)
 {
   if (!super) {
-    mrb_warn(mrb, "no super class for '%S', Object assumed", mrb_sym2str(mrb, name));
+    mrb_warn(mrb, "no super class for `%S', Object assumed", mrb_sym2str(mrb, name));
   }
   return define_class(mrb, name, super, mrb->object_class);
 }
@@ -246,7 +233,15 @@ mrb_vm_define_class(mrb_state *mrb, mrb_value outer, mrb_value super, mrb_sym id
   else {
     s = 0;
   }
-  check_if_class_or_module(mrb, outer);
+  switch (mrb_type(outer)) {
+  case MRB_TT_CLASS:
+  case MRB_TT_SCLASS:
+  case MRB_TT_MODULE:
+    break;
+  default:
+    mrb_raisef(mrb, E_TYPE_ERROR, "%S is not a class/module", outer);
+    break;
+  }
   c = define_class(mrb, id, s, mrb_class_ptr(outer));
   mrb_class_inherited(mrb, mrb_class_real(c->super), c);
 
@@ -311,7 +306,7 @@ mrb_define_class_under(mrb_state *mrb, struct RClass *outer, const char *name, s
 
 #if 0
   if (!super) {
-    mrb_warn(mrb, "no super class for '%S::%S', Object assumed",
+    mrb_warn(mrb, "no super class for `%S::%S', Object assumed",
              mrb_obj_value(outer), mrb_sym2str(mrb, id));
   }
 #endif
@@ -350,6 +345,22 @@ MRB_API void
 mrb_define_method(mrb_state *mrb, struct RClass *c, const char *name, mrb_func_t func, mrb_aspec aspec)
 {
   mrb_define_method_id(mrb, c, mrb_intern_cstr(mrb, name), func, aspec);
+}
+
+MRB_API void
+mrb_define_method_vm(mrb_state *mrb, struct RClass *c, mrb_sym name, mrb_value body)
+{
+  khash_t(mt) *h = c->mt;
+  khiter_t k;
+  struct RProc *p;
+
+  if (!h) h = c->mt = kh_init(mt, mrb);
+  k = kh_put(mt, mrb, h, name);
+  p = mrb_proc_ptr(body);
+  kh_value(h, k) = p;
+  if (p) {
+    mrb_field_write_barrier(mrb, (struct RBasic *)c, (struct RBasic *)p);
+  }
 }
 
 /* a function to raise NotImplementedError with current method name */
@@ -1061,7 +1072,7 @@ mrb_method_search(mrb_state *mrb, struct RClass* c, mrb_sym mid)
   m = mrb_method_search_vm(mrb, &c, mid);
   if (!m) {
     mrb_value inspect = mrb_funcall(mrb, mrb_obj_value(c), "inspect", 0);
-    if (mrb_string_p(inspect) && RSTRING_LEN(inspect) > 64) {
+    if (RSTRING_LEN(inspect) > 64) {
       inspect = mrb_any_to_s(mrb, mrb_obj_value(c));
     }
     mrb_name_error(mrb, mid, "undefined method '%S' for class %S",
@@ -1174,11 +1185,11 @@ mrb_instance_alloc(mrb_state *mrb, mrb_value cv)
  *  call-seq:
  *     class.new(args, ...)    ->  obj
  *
- *  Creates a new object of <i>class</i>'s class, then
- *  invokes that object's <code>initialize</code> method,
- *  passing it <i>args</i>. This is the method that ends
- *  up getting called whenever an object is constructed using
- *  `.new`.
+ *  Calls <code>allocate</code> to create a new object of
+ *  <i>class</i>'s class, then invokes that object's
+ *  <code>initialize</code> method, passing it <i>args</i>.
+ *  This is the method that ends up getting called whenever
+ *  an object is constructed using .new.
  *
  */
 
@@ -1313,7 +1324,7 @@ mrb_bob_missing(mrb_state *mrb, mrb_value mod)
   }
   else if (mrb_respond_to(mrb, mod, inspect) && mrb->c->ci - mrb->c->cibase < 64) {
     repr = mrb_funcall_argv(mrb, mod, inspect, 0, 0);
-    if (mrb_string_p(repr) && RSTRING_LEN(repr) > 64) {
+    if (RSTRING_LEN(repr) > 64) {
       repr = mrb_any_to_s(mrb, mod);
     }
   }
@@ -1505,7 +1516,7 @@ mrb_alias_method(mrb_state *mrb, struct RClass *c, mrb_sym a, mrb_sym b)
 {
   struct RProc *m = mrb_method_search(mrb, c, b);
 
-  mrb_define_method_raw(mrb, c, a, m);
+  mrb_define_method_vm(mrb, c, a, mrb_obj_value(m));
 }
 
 /*!
@@ -1597,11 +1608,14 @@ mrb_mod_alias(mrb_state *mrb, mrb_value mod)
 static void
 undef_method(mrb_state *mrb, struct RClass *c, mrb_sym a)
 {
+  mrb_value m;
+
   if (!mrb_obj_respond_to(mrb, c, a)) {
     mrb_name_error(mrb, a, "undefined method '%S' for class '%S'", mrb_sym2str(mrb, a), mrb_obj_value(c));
   }
   else {
-    mrb_define_method_raw(mrb, c, a, NULL);
+    SET_PROC_VALUE(m, 0);
+    mrb_define_method_vm(mrb, c, a, m);
   }
 }
 
@@ -1658,7 +1672,7 @@ check_cv_name_str(mrb_state *mrb, mrb_value str)
   mrb_int len = RSTRING_LEN(str);
 
   if (len < 3 || !(s[0] == '@' && s[1] == '@')) {
-    mrb_name_error(mrb, mrb_intern_str(mrb, str), "'%S' is not allowed as a class variable name", str);
+    mrb_name_error(mrb, mrb_intern_str(mrb, str), "`%S' is not allowed as a class variable name", str);
   }
 }
 
@@ -1846,7 +1860,7 @@ remove_method(mrb_state *mrb, mrb_value mod, mrb_sym mid)
     }
   }
 
-  mrb_name_error(mrb, mid, "method '%S' not defined in %S",
+  mrb_name_error(mrb, mid, "method `%S' not defined in %S",
     mrb_sym2str(mrb, mid), mod);
 }
 

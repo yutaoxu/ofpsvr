@@ -45,7 +45,7 @@ on-demand.
 
 #### Don't use C++ style comments
 
-    /* This is the preferred comment style */
+    /* This is the prefered comment style */
 
 Use C++ style comments only for temporary comment e.g. commenting out some code lines.
 

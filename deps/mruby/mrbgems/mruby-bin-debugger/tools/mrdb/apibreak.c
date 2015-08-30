@@ -203,6 +203,9 @@ mrb_debug_set_break_line( mrb_state *mrb, mrb_debug_context *dbg, const char *fi
   } 
 
   set_file = mrb_malloc(mrb, strlen(file) + 1);
+  if(set_file == NULL) {
+    return MRB_DEBUG_NOBUF;
+  }
 
   index = dbg->bpnum;
   dbg->bp[index].bpno = dbg->next_bpno;
@@ -240,6 +243,10 @@ mrb_debug_set_break_method( mrb_state *mrb, mrb_debug_context *dbg, const char *
 
   if(class_name != NULL) {
     set_class = mrb_malloc(mrb, strlen(class_name) + 1);
+    if(set_class == NULL) {
+      return MRB_DEBUG_NOBUF;
+    }
+    
     strncpy(set_class, class_name, strlen(class_name) + 1);
   }
   else {
@@ -247,6 +254,12 @@ mrb_debug_set_break_method( mrb_state *mrb, mrb_debug_context *dbg, const char *
   }
 
   set_method = mrb_malloc(mrb, strlen(method_name) + 1);
+  if(set_method == NULL) {
+    if(set_class != NULL) {
+      mrb_free(mrb, (void*)set_class);
+    }
+    return MRB_DEBUG_NOBUF;
+  }
 
   strncpy(set_method, method_name, strlen(method_name) + 1);
 
@@ -333,7 +346,7 @@ mrb_debug_delete_break( mrb_state *mrb, mrb_debug_context *dbg, uint32_t bpno )
   free_breakpoint(mrb, &dbg->bp[index]);
 
   for(i = index ; i < dbg->bpnum; i++) {
-    if((i + 1) == dbg->bpnum) {
+    if(dbg->bp[i + 1].type == MRB_DEBUG_BPTYPE_NONE) {
       memset(&dbg->bp[i], 0, sizeof(mrb_debug_breakpoint));
     }
     else {
@@ -461,7 +474,7 @@ mrb_debug_check_breakpoint_line( mrb_state *mrb, mrb_debug_context *dbg, const c
   }
 
   bp = dbg->bp;
-  for(i=0; i<dbg->bpnum; i++) {
+  for(i=0; i<MAX_BREAKPOINT; i++) {
     switch (bp->type) {
       case MRB_DEBUG_BPTYPE_LINE:
         if(bp->enable == TRUE) {
@@ -495,7 +508,7 @@ mrb_debug_check_breakpoint_method( mrb_state *mrb, mrb_debug_context *dbg, struc
   }
 
   bp = dbg->bp;
-  for(i=0; i<dbg->bpnum; i++) {
+  for(i=0; i<MAX_BREAKPOINT; i++) {
     if(bp->type == MRB_DEBUG_BPTYPE_METHOD) {
       if(bp->enable == TRUE) {
         bpno = compare_break_method(mrb, bp, class_obj, method_sym, isCfunc);

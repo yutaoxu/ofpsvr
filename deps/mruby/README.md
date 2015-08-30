@@ -18,9 +18,9 @@ of the Ministry of Economy, Trade and Industry of Japan.
 
 ## How to get mruby
 
-The stable version 1.1.0 of mruby can be downloaded via the following URL:
+The stable version 1.0.0 of mruby can be downloaded via the following URL:
 
-  https://github.com/mruby/mruby/archive/1.1.0.zip
+  https://github.com/mruby/mruby/archive/1.0.0.zip
 
 The latest development version of mruby can be downloaded via the following URL:
 
@@ -46,7 +46,7 @@ We don't have mailing list, use GitHub forum <http://github.com/mruby/mruby>.
 
 ## How to compile and install (mruby and gems)
 
-See the [doc/compile/README.md](doc/compile/README.md) file.
+See the INSTALL file.
 
 
 ## Running Tests
@@ -60,17 +60,16 @@ Or
     $ ruby ./minirake test
 
 
-## How to customize mruby (mrbgems)
+## Customization
 
 mruby contains a package manager called *mrbgems*. To create extensions
-in C and/or Ruby you should create a *GEM*. For a documentation of how to
-use mrbgems consult the file [doc/mrbgems/README.md](doc/mrbgems/README.md). For example code of
-how to use mrbgems look into the folder *examples/mrbgems/*.
+in C and/or Ruby you should create a *GEM*. You will find a complete
+documentation with examples under *examples/mrbgems*.
 
 
 ## License
 
-Copyright (c) 2015 mruby developers
+Copyright (c) 2014 mruby developers
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),

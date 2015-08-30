@@ -14,34 +14,34 @@ MRuby::GemBox.new do |conf|
   # Use standard Struct class
   conf.gem :core => "mruby-struct"
 
-  # Use Enumerable module extension
+  # Use extensional Enumerable module
   conf.gem :core => "mruby-enum-ext"
 
-  # Use String class extension
+  # Use extensional String class
   conf.gem :core => "mruby-string-ext"
 
-  # Use Numeric class extension
+  # Use extensional Numeric class
   conf.gem :core => "mruby-numeric-ext"
 
-  # Use Array class extension
+  # Use extensional Array class
   conf.gem :core => "mruby-array-ext"
 
-  # Use Hash class extension
+  # Use extensional Hash class
   conf.gem :core => "mruby-hash-ext"
 
-  # Use Range class extension
+  # Use extensional Range class
   conf.gem :core => "mruby-range-ext"
 
-  # Use Proc class extension
+  # Use extensional Proc class
   conf.gem :core => "mruby-proc-ext"
 
-  # Use Symbol class extension
+  # Use extensional Symbol class
   conf.gem :core => "mruby-symbol-ext"
 
   # Use Random class
   conf.gem :core => "mruby-random"
 
-  # Use Object class extension
+  # Use extensional Object class
   conf.gem :core => "mruby-object-ext"
 
   # Use ObjectSpace class
@@ -56,7 +56,7 @@ MRuby::GemBox.new do |conf|
   # Use Enumerable::Lazy class (require mruby-enumerator)
   conf.gem :core => "mruby-enum-lazy"
 
-  # Use toplevel object (main) methods extension
+  # Use extended toplevel object (main) methods
   conf.gem :core => "mruby-toplevel-ext"
 
   # Generate mirb command
@@ -68,9 +68,6 @@ MRuby::GemBox.new do |conf|
   # Generate mruby-strip command
   conf.gem :core => "mruby-bin-strip"
 
-  # Use Kernel module extension
+  # Use extensional Kernel module
   conf.gem :core => "mruby-kernel-ext"
-
-  # Use mruby-compiler to build other mrbgems
-  conf.gem :core => "mruby-compiler"
 end

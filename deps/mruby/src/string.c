@@ -4,6 +4,7 @@
 ** See Copyright Notice in mruby.h
 */
 
+#include <ctype.h>
 #include <float.h>
 #include <limits.h>
 #include <stddef.h>
@@ -161,7 +162,7 @@ str_new(mrb_state *mrb, const char *p, size_t len)
 {
   struct RString *s;
 
-  if (p && mrb_ro_data_p(p)) {
+  if (mrb_ro_data_p(p)) {
     return str_new_static(mrb, p, len);
   }
   s = mrb_obj_alloc_string(mrb);
@@ -775,12 +776,7 @@ num_index:
           return mrb_nil_value();
         }
       }
-    case MRB_TT_FLOAT:
     default:
-      indx = mrb_Integer(mrb, indx);
-      if (mrb_nil_p(indx)) {
-        mrb_raise(mrb, E_TYPE_ERROR, "can't convert to Fixnum");
-      }
       idx = mrb_fixnum(indx);
       goto num_index;
   }
@@ -817,7 +813,6 @@ num_index:
  *
  *     a = "hello there"
  *     a[1]                   #=> 101(1.8.7) "e"(1.9.2)
- *     a[1.1]                 #=>            "e"(1.9.2)
  *     a[1,3]                 #=> "ell"
  *     a[1..3]                #=> "ell"
  *     a[-3,2]                #=> "er"
@@ -1100,7 +1095,7 @@ mrb_str_downcase_bang(mrb_state *mrb, mrb_value str)
  *
  *  Returns a copy of <i>str</i> with all uppercase letters replaced with their
  *  lowercase counterparts. The operation is locale insensitive---only
- *  characters 'A' to 'Z' are affected.
+ *  characters ``A'' to ``Z'' are affected.
  *
  *     "hEllO".downcase   #=> "hello"
  */
@@ -1309,7 +1304,7 @@ mrb_str_index_m(mrb_state *mrb, mrb_value str)
 
   switch (mrb_type(sub)) {
     case MRB_TT_FIXNUM: {
-      mrb_int c = mrb_fixnum(sub);
+      int c = mrb_fixnum(sub);
       mrb_int len = RSTRING_LEN(str);
       unsigned char *p = (unsigned char*)RSTRING_PTR(str);
 
@@ -1655,7 +1650,7 @@ mrb_str_rindex_m(mrb_state *mrb, mrb_value str)
 
   switch (mrb_type(sub)) {
     case MRB_TT_FIXNUM: {
-      mrb_int c = mrb_fixnum(sub);
+      int c = mrb_fixnum(sub);
       unsigned char *p = (unsigned char*)RSTRING_PTR(str);
 
       for (pos=len-1;pos>=0;pos--) {
@@ -1703,7 +1698,7 @@ mrb_str_rindex_m(mrb_state *mrb, mrb_value str)
  *
  *  If <i>pattern</i> is omitted, the value of <code>$;</code> is used.  If
  *  <code>$;</code> is <code>nil</code> (which is the default), <i>str</i> is
- *  split on whitespace as if ' ' were specified.
+ *  split on whitespace as if ` ' were specified.
  *
  *  If the <i>limit</i> parameter is omitted, trailing null fields are
  *  suppressed. If <i>limit</i> is a positive number, at most that number of
@@ -1715,8 +1710,10 @@ mrb_str_rindex_m(mrb_state *mrb, mrb_value str)
  *     " now's  the time".split        #=> ["now's", "the", "time"]
  *     " now's  the time".split(' ')   #=> ["now's", "the", "time"]
  *     " now's  the time".split(/ /)   #=> ["", "now's", "", "the", "time"]
+ *     "1, 2.34,56, 7".split(%r{,\s*}) #=> ["1", "2.34", "56", "7"]
  *     "hello".split(//)               #=> ["h", "e", "l", "l", "o"]
  *     "hello".split(//, 3)            #=> ["h", "e", "llo"]
+ *     "hi mom".split(%r{\s*})         #=> ["h", "i", "m", "o", "m"]
  *
  *     "mellow yellow".split("ello")   #=> ["m", "w y", "w"]
  *     "1,2,,3,4,,".split(',')         #=> ["1", "2", "", "3", "4"]
@@ -1765,21 +1762,22 @@ mrb_str_split_m(mrb_state *mrb, mrb_value str)
   result = mrb_ary_new(mrb);
   beg = 0;
   if (split_type == awk) {
+    char *ptr = RSTRING_PTR(str);
+    char *eptr = RSTRING_END(str);
+    char *bptr = ptr;
     mrb_bool skip = TRUE;
-    mrb_int idx = 0;
-    mrb_int str_len = RSTRING_LEN(str);
     unsigned int c;
-    int ai = mrb_gc_arena_save(mrb);
 
-    idx = end = beg;
-    while (idx < str_len) {
-      c = (unsigned char)RSTRING_PTR(str)[idx++];
+    end = beg;
+    while (ptr < eptr) {
+      int ai = mrb_gc_arena_save(mrb);
+      c = (unsigned char)*ptr++;
       if (skip) {
         if (ISSPACE(c)) {
-          beg = idx;
+          beg = ptr - bptr;
         }
         else {
-          end = idx;
+          end = ptr - bptr;
           skip = FALSE;
           if (lim_p && lim <= i) break;
         }
@@ -1788,33 +1786,42 @@ mrb_str_split_m(mrb_state *mrb, mrb_value str)
         mrb_ary_push(mrb, result, mrb_str_subseq(mrb, str, beg, end-beg));
         mrb_gc_arena_restore(mrb, ai);
         skip = TRUE;
-        beg = idx;
+        beg = ptr - bptr;
         if (lim_p) ++i;
       }
       else {
-        end = idx;
+        end = ptr - bptr;
       }
     }
   }
   else if (split_type == string) {
-    mrb_int str_len = RSTRING_LEN(str);
-    mrb_int pat_len = RSTRING_LEN(spat);
-    mrb_int idx = 0;
-    int ai = mrb_gc_arena_save(mrb);
+    char *ptr = RSTRING_PTR(str); /* s->as.ary */
+    char *temp = ptr;
+    char *eptr = RSTRING_END(str);
+    mrb_int slen = RSTRING_LEN(spat);
 
-    while (idx < str_len) {
-      if (pat_len > 0) {
-        end = mrb_memsearch(RSTRING_PTR(spat), pat_len, RSTRING_PTR(str)+idx, str_len - idx);
-        if (end < 0) break;
-      } else {
-        end = 1;
+    if (slen == 0) {
+      int ai = mrb_gc_arena_save(mrb);
+      while (ptr < eptr) {
+        mrb_ary_push(mrb, result, mrb_str_subseq(mrb, str, ptr-temp, 1));
+        mrb_gc_arena_restore(mrb, ai);
+        ptr++;
+        if (lim_p && lim <= ++i) break;
       }
-      mrb_ary_push(mrb, result, mrb_str_subseq(mrb, str, idx, end));
-      mrb_gc_arena_restore(mrb, ai);
-      idx += end + pat_len;
-      if (lim_p && lim <= ++i) break;
     }
-    beg = idx;
+    else {
+      char *sptr = RSTRING_PTR(spat);
+      int ai = mrb_gc_arena_save(mrb);
+
+      while (ptr < eptr &&
+        (end = mrb_memsearch(sptr, slen, ptr, eptr - ptr)) >= 0) {
+        mrb_ary_push(mrb, result, mrb_str_subseq(mrb, str, ptr - temp, end));
+        mrb_gc_arena_restore(mrb, ai);
+        ptr += end + slen;
+        if (lim_p && lim <= ++i) break;
+      }
+    }
+    beg = ptr - temp;
   }
   else {
     mrb_noregexp(mrb, str);
@@ -1985,8 +1992,7 @@ bad:
 MRB_API const char*
 mrb_string_value_cstr(mrb_state *mrb, mrb_value *ptr)
 {
-  mrb_value str = mrb_str_to_str(mrb, *ptr);
-  struct RString *ps = mrb_str_ptr(str);
+  struct RString *ps = mrb_str_ptr(*ptr);
   mrb_int len = mrb_str_strlen(mrb, ps);
   char *p = RSTR_PTR(ps);
 
@@ -2003,12 +2009,12 @@ mrb_str_to_inum(mrb_state *mrb, mrb_value str, mrb_int base, mrb_bool badcheck)
   const char *s;
   mrb_int len;
 
+  str = mrb_str_to_str(mrb, str);
   if (badcheck) {
-    /* Raises if the string contains a null character (the badcheck) */
     s = mrb_string_value_cstr(mrb, &str);
   }
   else {
-    s = mrb_string_value_ptr(mrb, str);
+    s = RSTRING_PTR(str);
   }
   if (s) {
     len = RSTRING_LEN(str);
@@ -2211,7 +2217,7 @@ mrb_str_upcase_bang(mrb_state *mrb, mrb_value str)
  *
  *  Returns a copy of <i>str</i> with all lowercase letters replaced with their
  *  uppercase counterparts. The operation is locale insensitive---only
- *  characters 'a' to 'z' are affected.
+ *  characters ``a'' to ``z'' are affected.
  *
  *     "hEllO".upcase   #=> "HELLO"
  */

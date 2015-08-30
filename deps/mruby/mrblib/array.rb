@@ -34,7 +34,7 @@ class Array
     return to_enum :each_index unless block_given?
 
     idx = 0
-    while idx < length
+    while(idx < length)
       block.call(idx)
       idx += 1
     end
@@ -75,7 +75,7 @@ class Array
       self[size - 1] = nil  # allocate
 
       idx = 0
-      while idx < size
+      while(idx < size)
         self[idx] = (block)? block.call(idx): obj
         idx += 1
       end
@@ -146,7 +146,7 @@ class Array
   #  equal, then that inequality is the return value. If all the
   #  values found are equal, then the return is based on a
   #  comparison of the array lengths.  Thus, two arrays are
-  #  "equal" according to <code>Array#<=></code> if and only if they have
+  #  ``equal'' according to <code>Array#<=></code> if and only if they have
   #  the same length and the value of each element is equal to the
   #  value of the corresponding element in the other array.
   #

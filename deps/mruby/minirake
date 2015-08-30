@@ -237,8 +237,7 @@ module MiniRake
 
     # Time stamp for file task.
     def timestamp
-      stat = File::stat(name.to_s)
-      stat.directory? ? Time.at(0) : stat.mtime
+      File::stat(name.to_s).mtime
     end
   end
 
@@ -255,14 +254,12 @@ module MiniRake
 
     # Declare a set of files tasks to create the given directories on
     # demand.
-    def directory(args, &block)
-      MiniRake::FileTask.define_task(args) do |t|
-        block.call(t) unless block.nil?
-        dir = args.is_a?(Hash) ? args.keys.first : args
-        (dir.split(File::SEPARATOR) + ['']).inject do |acc, part|
-          (acc + File::SEPARATOR).tap do |d|
-            Dir.mkdir(d) unless File.exists? d
-          end + part
+    def directory(dir)
+      path = []
+      Sys.split_all(dir).each do |p|
+        path << p
+        FileTask.define_task(File.join(path)) do |t|
+          Sys.makedirs(t.name)
         end
       end
     end

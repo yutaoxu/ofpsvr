@@ -2,9 +2,6 @@
 *.bak
 *.d
 *.o
-/benchmark/**/*.dat
-/benchmark/*.pdf
-/benchmark/*.png
 *.orig
 *.pdb
 *.rej

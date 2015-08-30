@@ -31,7 +31,7 @@ module MRuby
       return nil unless Gem.current
 
       Gem.current.dir = gemdir
-      Gem.current.build = self.is_a?(MRuby::Build) ? self : MRuby::Build.current
+      Gem.current.build = MRuby::Build.current
       Gem.current.build_config_initializer = block
       gems << Gem.current
 
@@ -52,26 +52,6 @@ module MRuby
         else
           params[:git] = "https://bitbucket.org/#{params[:bitbucket]}.git"
         end
-      elsif params[:mgem]
-        mgem_list_dir = "#{gem_clone_dir}/mgem-list"
-        mgem_list_url = 'https://github.com/mruby/mgem-list.git'
-        if File.exist? mgem_list_dir
-          git.run_pull mgem_list_dir, mgem_list_url if $pull_gems
-        else
-          FileUtils.mkdir_p mgem_list_dir
-          git.run_clone mgem_list_dir, mgem_list_url
-        end
-
-        require 'yaml'
-
-        conf_path = "#{mgem_list_dir}/#{params[:mgem]}.gem"
-        conf_path = "#{mgem_list_dir}/mruby-#{params[:mgem]}.gem" unless File.exist? conf_path
-        fail "mgem not found: #{params[:mgem]}" unless File.exist? conf_path
-        conf = YAML.load File.read conf_path
-
-        fail "unknown mgem protocol: #{conf['protocol']}" if conf['protocol'] != 'git'
-        params[:git] = conf['repository']
-        params[:branch] = conf['branch'] if conf['branch']
       end
 
       if params[:core]
@@ -91,7 +71,6 @@ module MRuby
           end
         else
           options = [params[:options]] || []
-          options << "--recursive"
           options << "--branch \"#{branch}\""
           options << "--depth 1" unless params[:checksum_hash]
           FileUtils.mkdir_p "#{gem_clone_dir}"

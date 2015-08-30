@@ -63,7 +63,7 @@
              "<td id=\"main\">"
 #define OFPSVR_FOOTER  "</td>"\
              "<td id=\"sidebar\"><ul>"\
-             "<li><h2>关于我</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"%s/img/me.jpg\" />大家好, 我叫 <strong>P.S.V.R</strong>, 专注于开发健壮可靠、易于使用、文档清晰的高品质软件。<br style=\"clear:both\" /><strong>曾用名</strong>: Pan 平底锅 试管牛<br /><strong>衍生名</strong>: 平底牛 试管锅 事故按钮 ...</div></li>"\
+             "<li><h2>关于我</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"%s/img/me.jpg\" />大家好, 我叫 <strong>P.S.V.R</strong>, 专注于开发易于使用、健壮鲁棒、文档清晰的高品质软件。<br style=\"clear:both\" /><strong>曾用名</strong>: Pan 平底锅 试管牛<br /><strong>衍生名</strong>: 平底牛 试管锅 事故按钮 ...</div></li>"\
              "<li><h2>订阅</h2><div class=\"body\"><a href=\"/blog.xml\"><img id=\"rss\" alt=\"rss\" width=\"200\" height=\"173\" src=\"%s/img/rss.png\" /></a></div></li>"\
              "<li><h2>联系我</h2><div class=\"body\"><ul><li><img alt=\"address\" src=\"%s/img/email.png\" /></li></ul></div></li>"\
              "</ul></td>"\

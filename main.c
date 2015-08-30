@@ -65,24 +65,6 @@ void terminate(int sig)
 
 int main(int argc, const char *argv[])
 {
-        // Open mruby
-        mrb = mrb_open();
-        if (!mrb) {
-                WRITELOG("mrb_open() failed!\n");
-                return EXIT_FAILURE;
-        }
-        mrb_load_string(mrb, "puts 'こんにちは、mruby! :-)'");
-        mrb_load_string(mrb, "puts \"いまは #{Time.now} です。\"");
-        mrb_ofpsvr = mrb_define_module(mrb, "Ofpsvr");
-        mrb_define_module_function(mrb, mrb_ofpsvr, "uid", ofpsvr_uid,
-                                   MRB_ARGS_NONE());
-        mrb_define_module_function(mrb, mrb_ofpsvr, "gid", ofpsvr_gid,
-                                   MRB_ARGS_NONE());
-        mrb_define_module_function(mrb, mrb_ofpsvr, "halt!", ofpsvr_halt,
-                                   MRB_ARGS_NONE());
-        mrb_define_module_function(mrb, mrb_ofpsvr, "substantiate!",
-                                   ofpsvr_substantiate, MRB_ARGS_NONE());
-
         if (access(OFPSVR_PID_FILE, F_OK) == 0) {
                 FILE *fp = fopen(OFPSVR_PID_FILE, "r");
                 int existing_pid;
@@ -140,8 +122,8 @@ int main(int argc, const char *argv[])
 
         WRITELOG("___________________OFPSVR.COM_____________________\n");
         WRITELOG("Version %d\n", OFPSVR_VERSION);
-        WRITELOG("Linked with libmicrohttpd version %x\n", MHD_VERSION);
         WRITELOG("Written by P.S.V.R\n");
+        WRITELOG("Compiled with libmicrohttpd version %x\n", MHD_VERSION);
         WRITELOG("__________________________________________________\n\n");
 
         MYSQL my;
@@ -432,10 +414,6 @@ int main(int argc, const char *argv[])
         WRITELOG("MHD Daemon stopped.\n");
 
         substantiate();
-
-        // Close Mruby
-        mrb_load_string(mrb, "puts \"こんばんは！\"");
-        mrb_close(mrb);
 
         WRITELOG("Bye.\n");
         return EXIT_SUCCESS;

@@ -141,7 +141,7 @@ char *fill_content(char *name, char *email, char *website, char *body,
                              "</td>"
                              "<td class=\"commentbody\">"
                              "<div class=\"info\"><div class=\"info2\">"
-                             "<div class=\"date\">Posted at %ld (Unix time) | #%d</div>"
+                             "<div class=\"date\">发表于 %ld (Unix time) | #%d</div>"
                              "<div class=\"maininfo\"><div class=\"maininfo2\"><p>%s</p></div></div>"
                              "</div></div>"
                              "</td>"
@@ -161,7 +161,7 @@ char *fill_content(char *name, char *email, char *website, char *body,
                              "<table class=\"a_comment\"><tr>"
                              "<td class=\"commentbody\">"
                              "<div class=\"info\"><div class=\"info2\">"
-                             "<div class=\"date\">Posted at %ld (Unix time) | #%d</div>"
+                             "<div class=\"date\">发表于 %ld (Unix time) | #%d</div>"
                              "<div class=\"maininfo\"><div class=\"maininfo2\"><p>%s</p></div></div>"
                              "</div></div>"
                              "</td>"
@@ -211,7 +211,7 @@ int regenerate(struct Article *x, int id)
                      "<td class=\"post_bubble\"></td>"
                      "<td class=\"post_header\">"
                      "<h2 class=\"title\">%s</h2>"
-                     "<p class=\"byline\">Posted at %ld (Unix time)</p>"
+                     "<p class=\"byline\">发表于 %ld (Unix time)</p>"
                      "</td>"
                      "</tr><tr>"
                      "<td colspan=\"2\" class=\"post_body\">"
@@ -219,7 +219,7 @@ int regenerate(struct Article *x, int id)
                      "</td>"
                      "</tr></table>"
                      "<div class=\"intro\" style=\"margin-top:50px\">"
-                     "<p><span class=\"bracket\">{</span> <span>%d</span> files <span class=\"bracket\">}</span></p>"
+                     "<p><span class=\"bracket\">{</span> <span>%d</span> 个资源 <span class=\"bracket\">}</span></p>"
                      "</div>"
                      "<div id=\"resources_list_wrapper\">"
                      "<table id=\"resources_list\">"
@@ -388,7 +388,7 @@ struct MHD_Response *generate_blog_response()
                              "</td>"
                              "<td class=\"post_header\">"
                              "<h2 class=\"title\"><a href=\"/blog/%d\">%s</a></h2>"
-                             "<p class=\"byline\">Posted at %ld (Unix time) | #%d</p>"
+                             "<p class=\"byline\">发表于 %ld (Unix time) | #%d</p>"
                              "</td>"
                              "</tr><tr>"
                              "<td colspan=\"2\" class=\"post_body\">"
@@ -489,13 +489,14 @@ struct MHD_Response *generate_blog_response_rss()
         return ret;
 }
 
-static struct MHD_Response *response_static_page(char *content)
+// Pages passed to this function last for the whole life time of ofpsvr
+static struct MHD_Response *response_static_page(const char *content)
 {
         struct MHD_Response *response;
         if (!
             (response =
              MHD_create_response_from_data(strlen(content),
-                                           (void *)content, MHD_YES,
+                                           (void *)content, MHD_NO,
                                            MHD_YES))) {
                 WRITELOG
                     ("MHD_create_response_from_data failed at response_static_page.\n");
@@ -584,8 +585,8 @@ void prepare_response_index()
                 WRITELOG("sufficient space cannot be allocated in asprintf of prepare_resposnse_index");
                 exit(EXIT_FAILURE);
         }
-        
         response_index = response_static_page(page);
+        free(page);
 }
 
 void prepare_response_favicon()

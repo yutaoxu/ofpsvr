@@ -35,13 +35,11 @@
 /* Get a clean slate of DBEUG macros */
 #undef ENABLE_DEBUG
 #undef DISABLE_DEBUG
-#undef MRB_DEBUG
 #undef NDEBUG
 #undef HTTP_PARSER_STRICT
 
 #ifdef OFPSVR_DEBUG
 #define ENABLE_DEBUG
-#define MRB_DEBUG
 #define HTTP_PARSER_STRICT 1
 #else
 #define NDEBUG
@@ -87,10 +85,6 @@
 #include <setjmp.h> 
 
 #include <stdio.h>
-#include <mruby.h>
-#include <mruby/compile.h>
-#include <mruby/string.h>
-#include <mruby/error.h>
 
 #define POSTBUFFERSIZE  512
 #define OFPSVR_VERSION  8902
@@ -159,9 +153,6 @@ extern unsigned long cache_size;
 extern int cache_size_silent;
 extern int running;
 
-extern mrb_state *mrb;
-extern struct RClass *mrb_ofpsvr;
-
 // *** Global Functions ***
 
 void add_comment(struct Article *a,struct Comment *c);
@@ -186,12 +177,6 @@ int handler (void *cls, struct MHD_Connection *connection,
 void request_completed (void *cls, struct MHD_Connection *connection,
             void **con_cls, enum MHD_RequestTerminationCode toe);
 
-// mruby Functions
-mrb_value ofpsvr_uid(mrb_state *mrb, mrb_value obj);
-mrb_value ofpsvr_gid(mrb_state *mrb, mrb_value obj);
-mrb_value ofpsvr_halt(mrb_state *mrb, mrb_value obj);
-mrb_value ofpsvr_substantiate(mrb_state *mrb, mrb_value obj);
-
 // Main flow control
 void terminate();
 void substantiate();
@@ -201,6 +186,5 @@ MYSQL *ofpsvr_real_connect(MYSQL *mysql);
 /* error */
 void ofpsvr_fatal(int errono);
 void ofpsvr_location_stderr(const char* file, int line);
-
 #endif
 

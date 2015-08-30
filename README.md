@@ -21,7 +21,6 @@
 * [ImageMagick](http://www.imagemagick.org/)
 * [Check](http://check.sourceforge.net/)
 * [LCOV](http://ltp.sourceforge.net/coverage/lcov.php)
-* [ruby](https://www.ruby-lang.org/)
 * [bison](http://www.gnu.org/software/bison/)
 
 如果您使用 Mac，可以通过以下命令安装这些系统组件：
@@ -31,7 +30,6 @@ brew install libtool autoconf automake
 brew install mysql
 brew install gnutls
 brew install imagemagick
-brew install ruby
 brew install bison
 brew install check
 brew install lcov
@@ -44,7 +42,6 @@ sudo apt-get install libtool autoconf automake
 sudo apt-get install libmysqlclient-dev
 sudo apt-get install libssl-dev
 sudo apt-get install libgnutls-dev
-sudo apt-get install ruby
 sudo apt-get install bison
 sudo apt-get install check
 sudo apt-get install lcov

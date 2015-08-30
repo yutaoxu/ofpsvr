@@ -48,9 +48,6 @@ unsigned long cache_size;
 int cache_size_silent;
 int running;
 
-mrb_state *mrb;
-struct RClass *mrb_ofpsvr;
-
 #define OFPSVR_Q_404 MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response_404)
 #define OFPSVR_Q_500 MHD_queue_response(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, response_500)
 
@@ -282,45 +279,6 @@ struct connection_info_struct {
         } error_type;
         int finished;
 };
-
-// static int iterate_new_ctrl (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
-//              const char *filename, const char *content_type,
-//              const char *transfer_encoding, const char *data, uint64_t off,
-//              size_t size)
-// {
-//   if(size<=0) return MHD_YES;
-//   assert(coninfo_cls);
-//   struct connection_info_struct *con_info = (struct connection_info_struct *) coninfo_cls;
-//   assert(con_info);
-//   if (0 == strcmp (key, "data"))
-//   {
-//     if(!append_string(&(con_info->body),data))
-//       return MHD_NO;
-//   }
-//   else if (0 == strcmp (key, "commit"))
-//   {
-//     mrb_value obj = mrb_load_string(mrb, con_info->body);
-// 
-//     /* did an exception occur? */
-//     if (mrb->exc) {
-//       // obj = mrb_get_backtrace(mrb);
-//       obj = mrb_obj_value(mrb->exc);
-//       mrb->exc = 0;
-//     }
-//     
-//     obj = mrb_funcall(mrb, obj, "inspect", 0);
-//     
-//     if(!(con_info->output = calloc(1, RSTRING_LEN(obj))))
-//     {
-//       WRITELOG("calloc failed when allocating mem-space for mruby output.\n");
-//       return MHD_YES;
-//     }
-//     memcpy(con_info->output, RSTRING_PTR(obj), RSTRING_LEN(obj));
-//     con_info->finished = 1;
-//     return MHD_NO;
-//   }
-//   return MHD_YES;
-// }
 
 static int iterate_new_comment(void *coninfo_cls, enum MHD_ValueKind kind,
                                const char *key, const char *filename,

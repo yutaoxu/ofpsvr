@@ -44,6 +44,8 @@ struct MHD_Response *response_500 = NULL;
 struct MHD_Response *response_index = NULL;
 struct MHD_Response *response_favicon = NULL;
 
+const int captch_queue_size = 1000;
+
 unsigned long cache_size;
 int cache_size_silent;
 int running;

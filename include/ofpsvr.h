@@ -182,12 +182,14 @@ void terminate();
 void substantiate();
 
 // Utilities
-// Caller must free the returned buffer
-char *ofpsvr_timestr(long now);
 MYSQL *ofpsvr_real_connect(MYSQL *mysql);
+char *ofpsvr_timestr(long now);
+unsigned char *random_bytes(int length);
+char *base64(const unsigned char *input, int length);
 
 // Captcha
 extern const int gifsize;
+extern const int captch_queue_size;
 void captcha(unsigned char im[70*200], unsigned char l[6]);
 void makegif(unsigned char im[70*200], unsigned char gif[gifsize]);
 struct MHD_Response *generate_response_captcha();

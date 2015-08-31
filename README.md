@@ -8,7 +8,7 @@
 
 [![持续集成服务](https://travis-ci.org/pmq20/ofpsvr.svg?branch=master)](https://travis-ci.org/pmq20/ofpsvr)
 [![文档生成](https://readthedocs.org/projects/ofpsvr/badge/?version=latest)](http://ofpsvr.readthedocs.org/zh_CN/latest/)
-[![测试覆盖率](https://coveralls.io/repos/pmq20/ofpsvr/badge.png)](https://coveralls.io/r/pmq20/ofpsvr)
+[![测试覆盖率](https://img.shields.io/coveralls/pmq20/ofpsvr.svg?style=flat-square)](https://coveralls.io/r/pmq20/ofpsvr)
 
 ## 系统组件
 

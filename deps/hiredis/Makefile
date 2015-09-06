@@ -147,7 +147,11 @@ test: hiredis-test
 	./hiredis-test
 
 check: hiredis-test
-	@echo "$$REDIS_TEST_CONFIG" | $(REDIS_SERVER) -
+	echo $$REDIS_TEST_CONFIG
+	echo "$$REDIS_TEST_CONFIG" | $(REDIS_SERVER) -
+	ls /tmp/*.sock
+	ls /tmp/*.pid
+	lsof -i|grep redis-ser
 	$(PRE) ./hiredis-test -h 127.0.0.1 -p $(REDIS_PORT) -s /tmp/hiredis-test-redis.sock || \
 			( kill `cat /tmp/hiredis-test-redis.pid` && false )
 	kill `cat /tmp/hiredis-test-redis.pid`

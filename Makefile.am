@@ -1,12 +1,13 @@
 SUBDIRS                = deps/captcha                                         \
-                         deps/libmicrohttpd
+                         deps/libmicrohttpd                                   \
+                         deps/hiredis
 
 ACLOCAL_AMFLAGS        = -I m4
 
 AM_CFLAGS              = -I$(top_srcdir)/include                              \
                          -I$(top_srcdir)/deps/libmicrohttpd/src/include       \
                          $(DEBUGGING_CFLAGS)                                  \
-                         -std=gnu99 -Werror                                   \
+                         -std=gnu99 -pedantic                                 \
                          -Wall -Wextra -Wno-unused-parameter
 
 include_HEADERS        = include/ofpsvr.h
@@ -22,6 +23,7 @@ libofpsvr_la_SOURCES   = handler.c                                            \
 bin_PROGRAMS           = ofpsvr
 ofpsvr_LDADD           = libofpsvr.la                                         \
                          $(top_srcdir)/deps/captcha/libcaptcha.o              \
+                         $(top_srcdir)/deps/hiredis/libhiredis.a              \
                          $(top_srcdir)/deps/libmicrohttpd/src/microhttpd/.libs/libmicrohttpd.a
 ofpsvr_SOURCES         = main.c
 
@@ -30,6 +32,7 @@ check_PROGRAMS         = test/run
 test_run_LDADD         = -lcheck                                              \
                          libofpsvr.la                                         \
                          $(top_srcdir)/deps/captcha/libcaptcha.o              \
+                         $(top_srcdir)/deps/hiredis/libhiredis.a              \
                          $(top_srcdir)/deps/libmicrohttpd/src/microhttpd/.libs/libmicrohttpd.a
 test_run_SOURCES       = test/errors_test.c                                   \
                          test/run.c

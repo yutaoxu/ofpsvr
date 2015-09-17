@@ -21,6 +21,7 @@
 // FIXME: Remove these global var's
 
 char *asset_host = "";
+redisContext *ofpsvr_redis = NULL;
 
 struct Article **articles;
 int articles_len;
@@ -333,7 +334,7 @@ static int iterate_new_comment(void *coninfo_cls, enum MHD_ValueKind kind,
                 MYSQL mm;
                 if (!mysql_init(&mm))
                         return MHD_NO;
-                if (!ofpsvr_real_connect(&mm))
+                if (!ofpsvr_connect_mysql(&mm))
                         return MHD_NO;
                 if (mysql_set_character_set(&mm, "utf8"))
                         return MHD_NO;
@@ -509,12 +510,6 @@ int handler(void *cls, struct MHD_Connection *connection,
                                 return MHD_queue_response(connection,
                                                           MHD_HTTP_OK,
                                                           response_favicon);
-                        } else if (strstr(u, "/captcha") == u) {
-                                // /captcha.gif
-                                return MHD_queue_response(connection,
-                                                          MHD_HTTP_OK,
-                                                          generate_response_captcha());
-                                return 0;
                         }
                         break;
                 case 2:

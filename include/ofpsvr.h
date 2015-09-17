@@ -53,6 +53,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <stddef.h>
+#include <hiredis.h>
 
 #include <sys/select.h>
 #include <sys/types.h>
@@ -69,6 +70,8 @@
 #include <microhttpd.h>
 
 #include <mysql/mysql.h>
+#include <hiredis.h>
+
 #include <assert.h>
 #include <setjmp.h> 
 
@@ -123,6 +126,7 @@ struct Article
 // FIXME: Remove these global var's
 
 extern char *asset_host;
+extern redisContext *ofpsvr_redis;
 
 extern struct Article **articles;
 extern int articles_len;
@@ -170,17 +174,11 @@ void terminate();
 void substantiate();
 
 // Utilities
-MYSQL *ofpsvr_real_connect(MYSQL *mysql);
+MYSQL *ofpsvr_connect_mysql(MYSQL *mysql);
+void ofpsvr_connect_redis();
 char *ofpsvr_timestr(long now);
 unsigned char *random_bytes(int length);
 char *base64(const unsigned char *input, int length);
-
-// Captcha
-extern const int gifsize;
-extern const int captch_queue_size;
-void captcha(unsigned char im[70*200], unsigned char l[6]);
-void makegif(unsigned char im[70*200], unsigned char gif[gifsize]);
-struct MHD_Response *generate_response_captcha();
 
 /* error */
 void ofpsvr_fatal(int errono);

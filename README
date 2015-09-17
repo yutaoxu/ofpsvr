@@ -10,8 +10,6 @@ DEPENDENCIES
   - OpenSSL
   - GnuTLS
   - ImageMagick
-  - Check
-  - LCOV
   
   On a Macintosh computer, they could be installed via brew:
   
@@ -19,8 +17,6 @@ DEPENDENCIES
   $ brew install mysql
   $ brew install gnutls
   $ brew install imagemagick
-  $ brew install check
-  $ brew install lcov
   
   On a Linux box, say Ubuntu, they could be installed via apt-get:
 
@@ -28,14 +24,11 @@ DEPENDENCIES
   # apt-get install libmysqlclient-dev
   # apt-get install libssl-dev
   # apt-get install libgnutls-dev
-  # apt-get install check
-  # apt-get install lcov
 
 BUILDING
 
   - ./configure
   - make
-  - make check
   - sudo make install
 
   Note: if building from the source repository, first run:
@@ -50,6 +43,8 @@ RUNNING
   - "OFPSVR_DB_USER"    - MySQL user name
   - "OFPSVR_DB_PASSWD"  - MySQL password
   - "OFPSVR_DB_DB"      - MySQL database name
+  - "OFPSVR_REDIS_HOST" - Redis host
+  - "OFPSVR_REDIS_PORT" - Redis port number
   - "OFPSVR_ASSET_HOST" - CDN address, no trailing slashes
   
   For instance,
@@ -58,6 +53,8 @@ RUNNING
   $ export OFPSVR_DB_USER=user1
   $ export OFPSVR_DB_PASSWD=secret
   $ export OFPSVR_DB_DB=ofpsvr
+  $ export OFPSVR_REDIS_HOST=127.0.0.1
+  $ export OFPSVR_REDIS_PORT=6379
   $ export OFPSVR_ASSET_HOST=http://7xjzhb.com1.z0.glb.clouddn.com/890201
   
   Then run:

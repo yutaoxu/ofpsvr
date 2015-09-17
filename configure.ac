@@ -6,7 +6,6 @@ AC_INIT(
   [OF P.S.V.R], [8.9.0.2], [pmq2001@gmail.com], [ofpsvr],
   [https://github.com/pmq20/ofpsvr])
 : ${CFLAGS=""}
-AC_CONFIG_MACRO_DIR([m4])
 AC_COPYRIGHT([Copyright (C) 2009-2015  P.S.V.R])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_CONFIG_SRCDIR([main.c])
@@ -23,8 +22,6 @@ AC_PROG_MAKE_SET
 AM_PROG_AR
 AM_PROG_CC_C_O
 
-LT_INIT
-
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h netdb.h netinet/in.h stddef.h stdint.h  \
                   stdlib.h string.h sys/socket.h sys/time.h unistd.h])
@@ -40,12 +37,6 @@ AC_CHECK_HEADER(
     AC_MSG_ERROR([Please install OpenSSL;
       cf. https://www.openssl.org/])
   ])
-AC_CHECK_HEADER(
-  [check.h], ,
-  [
-    AC_MSG_ERROR([Please install check;
-      cf. http://check.sourceforge.net/])
-  ])
 
 # Checks for libraries.
 AC_CHECK_LIB([gnutls], [gnutls_cipher_get])
@@ -53,7 +44,6 @@ AC_CHECK_LIB([rt], [clock_gettime])
 AC_CHECK_LIB([mysqlclient], [mysql_init])
 AC_CHECK_LIB([pthread], [pthread_mutex_init])
 AC_CHECK_LIB([crypto], [MD5])
-AC_CHECK_LIB([check], [srunner_run_all])
 
 # Generic Program and File Checks
 AC_CHECK_PROG(IMAGE_MAGICK_CHECK,identify,yes)
@@ -81,12 +71,6 @@ AC_FUNC_FORK
 AC_CHECK_FUNCS([strchr strdup strrchr strstr])
 
 # Adding Options
-AC_ARG_WITH([gcov],
-  [AS_HELP_STRING([--with-gcov],
-    [Generates coverage reports @<:@default=no@:>@])],
-  [],
-  [with_gcov=no])
-
 AC_ARG_ENABLE(debug,
   AS_HELP_STRING([--enable-debug],
                  [enable debugging, default: no]),
@@ -96,9 +80,6 @@ AC_ARG_ENABLE(debug,
                *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
   esac],
   [debug=false])
-
-AS_IF([test "x$with_gcov" != xno],
-  [AC_SUBST([GCOV_CFLAGS], [--coverage])])
 
 AS_IF([test x"$debug" = x"true"],
   [

@@ -25,13 +25,13 @@
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 
-MYSQL *ofpsvr_real_connect(MYSQL * mysql)
+MYSQL *ofpsvr_connect_mysql(MYSQL * mysql)
 {
         char *host = getenv("OFPSVR_DB_HOST");
         char *user = getenv("OFPSVR_DB_USER");
         char *passwd = getenv("OFPSVR_DB_PASSWD");
         char *db = getenv("OFPSVR_DB_DB");
-        if (!host || !user || !passwd || !db) {
+        if (NULL == host || NULL == user || NULL == passwd || NULL == db) {
                 WRITELOG("Please set these environment variables: \
 OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB\n");
                 exit(EXIT_FAILURE);
@@ -39,6 +39,33 @@ OFPSVR_DB_HOST, OFPSVR_DB_USER, OFPSVR_DB_PASSWD, OFPSVR_DB_DB\n");
         return mysql_real_connect(mysql, host, user, passwd, db, 0, NULL, 0);
 }
 
+void ofpsvr_connect_redis()
+{
+        char *hostname = getenv("OFPSVR_REDIS_HOST");
+        char *port_str = getenv("OFPSVR_REDIS_PORT");
+        int port;
+
+        if (NULL == hostname || NULL == port_str) {
+                WRITELOG("Please set these environment variables: \
+OFPSVR_REDIS_HOST, OFPSVR_REDIS_PORT\n");
+                exit(EXIT_FAILURE);
+        }
+
+        port = atoi(port_str);
+
+        struct timeval timeout = { 1, 500000 }; // 1.5 seconds
+        ofpsvr_redis = redisConnectWithTimeout(hostname, port, timeout);
+        if (ofpsvr_redis == NULL || ofpsvr_redis->err) {
+            if (ofpsvr_redis) {
+                WRITELOG("Connection error: %s\n", ofpsvr_redis->errstr);
+                redisFree(ofpsvr_redis);
+            } else {
+                WRITELOG("Connection error: can't allocate redis context\n");
+            }
+            exit(EXIT_FAILURE);
+        }
+}
+        
 void substantiate()
 {
         MYSQL my;
@@ -53,7 +80,7 @@ void substantiate()
                 WRITELOG("mysql_init failed!\n");
                 exit(EXIT_FAILURE);
         }
-        if (!ofpsvr_real_connect(&my)) {
+        if (!ofpsvr_connect_mysql(&my)) {
                 WRITELOG("mysql_real_connect failed!\n");
                 if (mysql_errno(&my)) {
                         WRITELOG("error %d: %s\n", mysql_errno(&my),

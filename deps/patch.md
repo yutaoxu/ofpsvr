@@ -1,16 +1,3 @@
-## captcha
-
-Add this to Makefile
-
-```
-check : testlib
-.PHONY : check
-
-install :
-	echo make install for captcha is a no-op
-.PHONY : install
-```
-
 ## libmicrohttpd
 
     Port libmicrohttpd SVN 36085)

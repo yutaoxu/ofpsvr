@@ -109,9 +109,9 @@ int main(int argc, const char *argv[])
         }
 
         WRITELOG("___________________OFPSVR.COM_____________________\n");
-        WRITELOG("Version %d\n", OFPSVR_VERSION);
-        WRITELOG("Compiled with libmicrohttpd version %x\n", MHD_VERSION);
-        WRITELOG("libcaptcha gifsize=%d\n", gifsize);
+        WRITELOG("version %d\n", OFPSVR_VERSION);
+        WRITELOG("libmicrohttpd version %x\n", MHD_VERSION);
+        WRITELOG("hiredis version %d.%d.%d\n", HIREDIS_MAJOR, HIREDIS_MINOR, HIREDIS_PATCH);
         WRITELOG("Written by P.S.V.R\n");
         WRITELOG("__________________________________________________\n\n");
 
@@ -132,7 +132,7 @@ int main(int argc, const char *argv[])
                 WRITELOG("mysql_init failed!\n");
                 return EXIT_FAILURE;
         }
-        if (!ofpsvr_real_connect(&my)) {
+        if (!ofpsvr_connect_mysql(&my)) {
                 WRITELOG("mysql_real_connect failed!\n");
                 if (mysql_errno(&my)) {
                         WRITELOG("error %d: %s\n", mysql_errno(&my),
@@ -145,6 +145,9 @@ int main(int argc, const char *argv[])
                 return EXIT_FAILURE;
         }
         printf("OK\n");
+        
+        printf("Connecting Redis...");
+        ofpsvr_connect_redis();
 
         // 1. Retrieving Articles
         if (mysql_query(&my, "SELECT * FROM ofpsvr_articles ORDER BY id")) {

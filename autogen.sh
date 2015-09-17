@@ -18,19 +18,13 @@
 
 cd `dirname "$0"`
 
-if [ "$LIBTOOLIZE" = "" ] && [ "`uname`" = "Darwin" ]; then
-  LIBTOOLIZE=glibtoolize
-fi
-
 ACLOCAL=${ACLOCAL:-aclocal}
 AUTOCONF=${AUTOCONF:-autoconf}
 AUTOHEADER=${AUTOHEADER:-autoheader}
 AUTOMAKE=${AUTOMAKE:-automake}
-LIBTOOLIZE=${LIBTOOLIZE:-libtoolize}
 
 set -ex
-"$LIBTOOLIZE"
-"$ACLOCAL" -I m4
+"$ACLOCAL"
 "$AUTOCONF"
 "$AUTOHEADER"
 "$AUTOMAKE" --add-missing --copy

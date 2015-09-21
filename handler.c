@@ -18,27 +18,6 @@
 
 #include "ofpsvr.h"
 
-// FIXME: Remove these global var's
-
-char *asset_host = "";
-redisContext *ofpsvr_redis = NULL;
-
-struct Article **articles;
-int articles_len;
-
-struct Resource *resources;
-
-struct MHD_Response *response_404 = NULL;
-struct MHD_Response *response_500 = NULL;
-struct MHD_Response *response_index = NULL;
-struct MHD_Response *response_favicon = NULL;
-
-const int captch_queue_size = 1000;
-
-unsigned long cache_size;
-int cache_size_silent;
-int running;
-
 #define OFPSVR_Q_404 MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response_404)
 #define OFPSVR_Q_500 MHD_queue_response(connection, MHD_HTTP_INTERNAL_SERVER_ERROR, response_500)
 
@@ -72,6 +51,25 @@ static int send_page(struct MHD_Connection *connection, char *content)
         ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
         MHD_destroy_response(response);
         return ret;
+}
+
+static int send_captcha_page(struct MHD_Connection *connection, char *content)
+{
+    int ret;
+    struct MHD_Response *response;
+    if (!
+        (response =
+         MHD_create_response_from_data(strlen(content), (void *)content,
+                                       MHD_NO, MHD_YES)))
+        return MHD_NO;
+    if (MHD_NO ==
+        MHD_add_response_header(response, MHD_HTTP_HEADER_CONTENT_TYPE,
+                                "text/html")) {
+            return MHD_NO;
+        }
+    ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
+    MHD_destroy_response(response);
+    return ret;
 }
 
 static int sanitize(char **in)
@@ -414,15 +412,14 @@ static int iterate_new_comment(void *coninfo_cls, enum MHD_ValueKind kind,
                      fill_content(con_info->name, con_info->email,
                                   con_info->website, con_info->body,
                                   con_info->posted_at,
-                                  articles[con_info->
-                                           parsed_article_id]->comment_count +
-                                  1))) {
+                                  articles[con_info->parsed_article_id]->
+                                  comment_count + 1))) {
                         return MHD_NO;
                 }
                 pthread_mutex_lock(&
                                    (articles
-                                    [con_info->
-                                     parsed_article_id]->comment_related_lock));
+                                    [con_info->parsed_article_id]->
+                                    comment_related_lock));
                 add_comment(articles[con_info->parsed_article_id],
                             con_info->comment);
                 if (!regenerate
@@ -432,8 +429,8 @@ static int iterate_new_comment(void *coninfo_cls, enum MHD_ValueKind kind,
                 }
                 pthread_mutex_unlock(&
                                      (articles
-                                      [con_info->
-                                       parsed_article_id]->comment_related_lock));
+                                      [con_info->parsed_article_id]->
+                                      comment_related_lock));
                 con_info->finished = 1;
                 return MHD_NO;
         } else {
@@ -471,15 +468,17 @@ int handler(void *cls, struct MHD_Connection *connection,
                 }
         }
 
-        if ('G' == method[0]) { // GET
+        if ('G' == method[0]) {
+                // GET
                 switch (slash_count) {
                 case 1:
-                        if ('\0' == u[1])       // "/"
-                        {
+                        if ('\0' == u[1]) {
+                                // "/"
                                 return MHD_queue_response(connection,
                                                           MHD_HTTP_OK,
                                                           response_index);
-                        } else if (strstr(u, "/blog") == u) {   // "/blog";
+                        } else if (strstr(u, "/blog") == u) {
+                                // "/blog"
                                 struct MHD_Response *response;
                                 if (extension && (0 == strcmp("rss", extension)
                                                   || 0 == strcmp("xml",
@@ -506,10 +505,12 @@ int handler(void *cls, struct MHD_Connection *connection,
                                 MHD_destroy_response(response);
                                 return ret;
                         } else if (strstr(u, "/favicon") == u) {
-                                // /favicon.ico
+                                // "/favicon.ico"
                                 return MHD_queue_response(connection,
                                                           MHD_HTTP_OK,
                                                           response_favicon);
+                        } else {
+                            return OFPSVR_Q_404;
                         }
                         break;
                 case 2:
@@ -517,8 +518,8 @@ int handler(void *cls, struct MHD_Connection *connection,
                         if (!ptr)
                                 return OFPSVR_Q_404;
                         ++ptr;
-                        if ('b' == u[1])        // "/blog/..."
-                        {
+                        if ('b' == u[1]) {
+                                // "/blog/..."
                                 int parsed_article_id;
                                 if (1 != sscanf(ptr, "%d", &parsed_article_id))
                                         return OFPSVR_Q_404;
@@ -526,21 +527,24 @@ int handler(void *cls, struct MHD_Connection *connection,
                                     && parsed_article_id < articles_len) {
                                         pthread_mutex_lock(&
                                                            (articles
-                                                            [parsed_article_id]->hit_related_lock));
-                                        ++articles
-                                            [parsed_article_id]->hit_count;
+                                                            [parsed_article_id]->
+                                                            hit_related_lock));
+                                        ++articles[parsed_article_id]->
+                                            hit_count;
                                         pthread_mutex_unlock(&
                                                              (articles
-                                                              [parsed_article_id]->hit_related_lock));
+                                                              [parsed_article_id]->
+                                                              hit_related_lock));
                                         return MHD_queue_response(connection,
                                                                   MHD_HTTP_OK,
                                                                   articles
-                                                                  [parsed_article_id]->response);
+                                                                  [parsed_article_id]->
+                                                                  response);
                                 } else {
                                         return OFPSVR_Q_404;
                                 }
-                        } else if ('r' == u[1]) // "/resources/..."
-                        {
+                        } else if ('r' == u[1]) {
+                                // "/resources/..."
                                 struct Resource *resource_ptr;
                                 for (resource_ptr = resources; resource_ptr;
                                      resource_ptr = resource_ptr->next)
@@ -550,12 +554,14 @@ int handler(void *cls, struct MHD_Connection *connection,
                                 if (resource_ptr)
                                         return MHD_queue_response(connection,
                                                                   MHD_HTTP_OK,
-                                                                  resource_ptr->response);
+                                                                  resource_ptr->
+                                                                  response);
                                 else
                                         return OFPSVR_Q_404;
                         }
                         break;
-                case 4:        // "/blog/.../resources/..."
+                case 4:
+                        // "/blog/.../resources/..."
                         ptr = strrchr(u, '/');
                         ptr_another = strchr(u + 1, '/');
                         if (!ptr || !ptr_another)
@@ -584,19 +590,48 @@ int handler(void *cls, struct MHD_Connection *connection,
                         if (resource_ptr)
                                 return MHD_queue_response(connection,
                                                           MHD_HTTP_OK,
-                                                          resource_ptr->response);
+                                                          resource_ptr->
+                                                          response);
                         else
                                 return OFPSVR_Q_404;
                 default:
                         return OFPSVR_Q_404;
                 }
                 return OFPSVR_Q_404;
-        } else                  // POST
-        {
+        } else {
+                // POST
                 struct connection_info_struct *con_info;
                 switch (slash_count) {
-                case 1:        // '/ctrl'
-                case 2:        // "/blog/..."
+                case 1:
+                        if (strstr(u, "/captcha") == u) {
+                            // "/captcha"
+                            char *captcha_page;
+                            const char *session_key;
+                            char *name;
+                            char *email;
+                            char *website;
+                            char *question;
+                            session_key = MHD_lookup_connection_value(connection, MHD_HEADER_KIND, "X-OFPSVR-SESSION");
+//                            if (session_id != NULL) {
+//                                <#statements#>
+//                            } else {
+//                                
+//                            }
+                            if (asprintf
+                                (&captcha_page,
+                                 "%s", session_key) < 0) {
+                                    WRITELOG
+                                    ("asprintf failed in captcha\n");
+                                    return OFPSVR_Q_500;
+                                }
+                            int ret = send_captcha_page(connection, captcha_page);
+                            free(captcha_page);
+                            return ret;
+                        } else {
+                            return OFPSVR_Q_404;
+                        }
+                case 2:
+                        // "/blog/..."
                         if (NULL == *con_cls) {
                                 ptr = strrchr(url, '/');
                                 if (!ptr)

@@ -18,6 +18,27 @@
 
 #include "ofpsvr.h"
 
+// FIXME: Remove these global var's
+
+char *asset_host = "";
+redisContext *ofpsvr_redis = NULL;
+
+struct Article **articles;
+int articles_len;
+
+struct Resource *resources;
+
+struct MHD_Response *response_404 = NULL;
+struct MHD_Response *response_500 = NULL;
+struct MHD_Response *response_index = NULL;
+struct MHD_Response *response_favicon = NULL;
+
+const int captch_queue_size = 1000;
+
+unsigned long cache_size;
+int cache_size_silent;
+int running;
+
 jmp_buf main_loop;
 
 static char *utime2rfctime(long u)
@@ -111,7 +132,8 @@ int main(int argc, const char *argv[])
         WRITELOG("___________________OFPSVR.COM_____________________\n");
         WRITELOG("version %d\n", OFPSVR_VERSION);
         WRITELOG("libmicrohttpd version %x\n", MHD_VERSION);
-        WRITELOG("hiredis version %d.%d.%d\n", HIREDIS_MAJOR, HIREDIS_MINOR, HIREDIS_PATCH);
+        WRITELOG("hiredis version %d.%d.%d\n", HIREDIS_MAJOR, HIREDIS_MINOR,
+                 HIREDIS_PATCH);
         WRITELOG("Written by P.S.V.R\n");
         WRITELOG("__________________________________________________\n\n");
 
@@ -120,7 +142,7 @@ int main(int argc, const char *argv[])
         size_t sz;
         cache_size = 0;
         cache_size_silent = 1;
-        
+
         asset_host = getenv("OFPSVR_ASSET_HOST");
         if (NULL == asset_host)
                 asset_host = "";
@@ -145,7 +167,7 @@ int main(int argc, const char *argv[])
                 return EXIT_FAILURE;
         }
         printf("OK\n");
-        
+
         printf("Connecting Redis...");
         ofpsvr_connect_redis();
 
@@ -362,7 +384,7 @@ int main(int argc, const char *argv[])
         assert(response_500);
         assert(response_index);
         assert(response_favicon);
-        
+
         mysql_free_result(res_ptr);
         mysql_close(&my);
 

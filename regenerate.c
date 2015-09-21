@@ -51,7 +51,7 @@
              "<td id=\"main\">"
 #define OFPSVR_FOOTER  "</td>"\
              "<td id=\"sidebar\"><ul>"\
-             "<li><h2>关于我</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"%s/img/me.jpg\" />大家好, 我叫 <strong>P.S.V.R</strong>, 专注于开发易于使用、健壮鲁棒、文档清晰的高品质软件。<br style=\"clear:both\" /><strong>曾用名</strong>: Pan 平底锅 试管牛<br /><strong>衍生名</strong>: 平底牛 试管锅 事故按钮 ...</div></li>"\
+             "<li><h2>关于我</h2><div id=\"about_me\" class=\"body\"><img alt=\"P.S.V.R\" id=\"psvr\" class=\"illustration\" src=\"%s/img/me.jpg\" />大家好, 我叫 <strong>P.S.V.R</strong>, 致力于开发易于使用、稳定健壮、文档清晰的高品质软件。<br style=\"clear:both\" /><strong>曾用名</strong>: Pan 平底锅 试管牛<br /><strong>衍生名</strong>: 平底牛 试管锅 事故按钮 ...</div></li>"\
              "<li><h2>订阅</h2><div class=\"body\"><a href=\"/blog.xml\"><img id=\"rss\" alt=\"rss\" width=\"200\" height=\"173\" src=\"%s/img/rss.png\" /></a></div></li>"\
              "<li><h2>联系我</h2><div class=\"body\"><ul><li><img alt=\"address\" src=\"%s/img/email.png\" /></li></ul></div></li>"\
              "</ul></td>"\
@@ -188,37 +188,8 @@ int regenerate(struct Article *x, int id)
         }
         char *page, *old;
         char *tmp_timestr = ofpsvr_timestr(x->posted_at);
-        if (asprintf(&page,
-                     OFPSVR_HEADER1
-                     "<title>%s - Blog Of P.S.V.R</title>"
-                     OFPSVR_HEADER2
-                     "<table class=\"post\"><tr>"
-                     "<td class=\"post_bubble\"></td>"
-                     "<td class=\"post_header\">"
-                     "<h2 class=\"title\">%s</h2>"
-                     "<p class=\"byline\">发表于 %s</p>"
-                     "</td>"
-                     "</tr><tr>"
-                     "<td colspan=\"2\" class=\"post_body\">"
-                     "%s"
-                     "</td>"
-                     "</tr></table>"
-                     "<div class=\"intro\" style=\"margin-top:50px\">"
-                     "<p><span class=\"bracket\">{</span> <span>%d</span> 个资源 <span class=\"bracket\">}</span></p>"
-                     "</div>"
-                     "<div id=\"resources_list_wrapper\">"
-                     "<table id=\"resources_list\">"
-                     "<thead>"
-                     "<tr>"
-                     "<td width=\"20%%\">编号</td>"
-                     "<td width=\"60%%\">文件名</td>"
-                     "<td width=\"20%%\">大小</td>"
-                     "</tr>"
-                     "</thead>"
-                     "<tbody>",
-                     asset_host, asset_host, /* OFPSVR_HEADER1 */
-                     x->title,
-                     asset_host, asset_host, asset_host, /* OFPSVR_HEADER2 */
+        if (asprintf(&page, OFPSVR_HEADER1 "<title>%s - Blog Of P.S.V.R</title>" OFPSVR_HEADER2 "<table class=\"post\"><tr>" "<td class=\"post_bubble\"></td>" "<td class=\"post_header\">" "<h2 class=\"title\">%s</h2>" "<p class=\"byline\">发表于 %s</p>" "</td>" "</tr><tr>" "<td colspan=\"2\" class=\"post_body\">" "%s" "</td>" "</tr></table>" "<div class=\"intro\" style=\"margin-top:50px\">" "<p><span class=\"bracket\">{</span> <span>%d</span> 个资源 <span class=\"bracket\">}</span></p>" "</div>" "<div id=\"resources_list_wrapper\">" "<table id=\"resources_list\">" "<thead>" "<tr>" "<td width=\"20%%\">编号</td>" "<td width=\"60%%\">文件名</td>" "<td width=\"20%%\">大小</td>" "</tr>" "</thead>" "<tbody>", asset_host, asset_host,   /* OFPSVR_HEADER1 */
+                     x->title, asset_host, asset_host, asset_host,      /* OFPSVR_HEADER2 */
                      x->title, tmp_timestr, x->body, x->resource_count) < 0) {
                 return 0;
         }
@@ -265,22 +236,8 @@ int regenerate(struct Article *x, int id)
                 free(old);
         }
         old = page;
-        if (asprintf(&page, "%s"
-                     "<div class=\"intro\">"
-                     "<p>您也随便说两句吧</p>"
-                     "</div>"
-                     "<form id=\"comments_add\" method=\"post\" onsubmit=\"return test_submit()\">"
-                     "<p><input type=\"text\" tabindex=\"1\" size=\"22\" value=\"\" id=\"author\" name=\"reply[name]\"/>"
-                     "<label for=\"author\">*昵称</label>"
-                     "<p><input type=\"text\" tabindex=\"2\" size=\"22\" value=\"\" id=\"email\" name=\"reply[email]\"/>"
-                     "<label for=\"email\">*E-mail (用于<a href=\"http://gravatar.com\">Gravatar</a>, 不会公开)</label></p>"
-                     "<p><input type=\"text\" tabindex=\"3\" size=\"22\" value=\"\" id=\"url\" name=\"reply[website]\"/>"
-                     "<label for=\"url\">您的网站（可选）</label></p>"
-                     "<p><textarea tabindex=\"4\" rows=\"5\" cols=\"100\" id=\"comment\" name=\"reply[body]\"></textarea></p>"
-                     "<p><input type=\"submit\" value=\"提交评论\" tabindex=\"5\" id=\"submit\" name=\"commit\"/></p>"
-                     "</form>" OFPSVR_FOOTER, old,
-                     asset_host, asset_host, asset_host /* OFPSVR_FOOTER */
-                     ) < 0) {
+        if (asprintf(&page, "%s" "<div class=\"intro\">" "<p>您也随便说两句吧</p>" "</div>" "<form id=\"comments_add\" method=\"post\" onsubmit=\"return test_submit()\">" "<p><input type=\"text\" tabindex=\"1\" size=\"22\" value=\"\" id=\"author\" name=\"reply[name]\"/>" "<label for=\"author\">*昵称</label>" "<p><input type=\"text\" tabindex=\"2\" size=\"22\" value=\"\" id=\"email\" name=\"reply[email]\"/>" "<label for=\"email\">*E-mail (用于<a href=\"http://gravatar.com\">Gravatar</a>, 不会公开)</label></p>" "<p><input type=\"text\" tabindex=\"3\" size=\"22\" value=\"\" id=\"url\" name=\"reply[website]\"/>" "<label for=\"url\">您的网站（可选）</label></p>" "<p><textarea tabindex=\"4\" rows=\"5\" cols=\"100\" id=\"comment\" name=\"reply[body]\"></textarea></p>" "<p><input type=\"submit\" value=\"提交评论\" tabindex=\"5\" id=\"submit\" name=\"commit\"/></p>" "</form>" OFPSVR_FOOTER, old, asset_host, asset_host, asset_host      /* OFPSVR_FOOTER */
+            ) < 0) {
                 return 0;
         }
         assert(old);
@@ -344,12 +301,9 @@ static char *count2str(int count)
 struct MHD_Response *generate_blog_response()
 {
         char *page, *old;
-        if (asprintf(&page,
-                     OFPSVR_HEADER1
-                     "<title>Blog Of P.S.V.R</title>" OFPSVR_HEADER2,
-                     asset_host, asset_host, /* OFPSVR_HEADER1 */
+        if (asprintf(&page, OFPSVR_HEADER1 "<title>Blog Of P.S.V.R</title>" OFPSVR_HEADER2, asset_host, asset_host,     /* OFPSVR_HEADER1 */
                      asset_host, asset_host, asset_host /* OFPSVR_HEADER2 */
-                     ) < 0) {
+            ) < 0) {
                 return NULL;
         }
         int i;
@@ -365,7 +319,7 @@ struct MHD_Response *generate_blog_response()
                     (resource_count_str =
                      count2str(articles[i]->resource_count)))
                         return NULL;
-                char* tmp_timestr = ofpsvr_timestr(articles[i]->posted_at);
+                char *tmp_timestr = ofpsvr_timestr(articles[i]->posted_at);
                 if (asprintf(&page, "%s"
                              "<table class=\"post\"><tr>"
                              "<td class=\"post_boxes\">"
@@ -401,9 +355,8 @@ struct MHD_Response *generate_blog_response()
                 free(resource_count_str);
         }
         old = page;
-        if (asprintf(&page, "%s" OFPSVR_FOOTER, old,
-                     asset_host, asset_host, asset_host /* OFPSVR_FOOTER */
-                     ) < 0) {
+        if (asprintf(&page, "%s" OFPSVR_FOOTER, old, asset_host, asset_host, asset_host /* OFPSVR_FOOTER */
+            ) < 0) {
                 return NULL;
         }
         assert(old);
@@ -484,8 +437,7 @@ static struct MHD_Response *response_static_page(const char *content)
         if (!
             (response =
              MHD_create_response_from_data(strlen(content),
-                                           (void *)content, MHD_NO,
-                                           MHD_NO))) {
+                                           (void *)content, MHD_NO, MHD_NO))) {
                 WRITELOG
                     ("MHD_create_response_from_data failed at response_static_page.\n");
                 exit(EXIT_FAILURE);
@@ -503,7 +455,7 @@ static struct MHD_Response *response_static_page(const char *content)
 
 void prepare_response_404()
 {
-        if(NULL != response_404)
+        if (NULL != response_404)
                 return;
         response_404 = response_static_page("<!DOCTYPE html>"
                                             "<html>"
@@ -523,7 +475,7 @@ void prepare_response_404()
 
 void prepare_response_500()
 {
-        if(NULL != response_500)
+        if (NULL != response_500)
                 return;
         response_500 = response_static_page("<!DOCTYPE html>"
                                             "<html>"
@@ -545,7 +497,7 @@ void prepare_response_500()
 
 void prepare_response_index()
 {
-        if(NULL != response_index)
+        if (NULL != response_index)
                 return;
         char *page;
         // Mem `page` should never be freed
@@ -577,7 +529,8 @@ void prepare_response_index()
                      "        </script>"
                      "    </body>" "</html>",
                      asset_host, asset_host, asset_host, asset_host) < 0) {
-                WRITELOG("sufficient space cannot be allocated in asprintf of prepare_resposnse_index");
+                WRITELOG
+                    ("sufficient space cannot be allocated in asprintf of prepare_resposnse_index");
                 exit(EXIT_FAILURE);
         }
         response_index = response_static_page(page);
@@ -585,7 +538,7 @@ void prepare_response_index()
 
 void prepare_response_favicon()
 {
-        if(NULL != response_favicon)
+        if (NULL != response_favicon)
                 return;
         if (!
             (response_favicon =
@@ -604,5 +557,5 @@ void prepare_response_favicon()
                     ("MHD_add_response_header failed at prepare_response_favicon.\n");
                 exit(EXIT_FAILURE);
         }
-        
+
 }

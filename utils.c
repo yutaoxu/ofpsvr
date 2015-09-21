@@ -56,16 +56,18 @@ OFPSVR_REDIS_HOST, OFPSVR_REDIS_PORT\n");
         struct timeval timeout = { 1, 500000 }; // 1.5 seconds
         ofpsvr_redis = redisConnectWithTimeout(hostname, port, timeout);
         if (ofpsvr_redis == NULL || ofpsvr_redis->err) {
-            if (ofpsvr_redis) {
-                WRITELOG("Connection error: %s\n", ofpsvr_redis->errstr);
-                redisFree(ofpsvr_redis);
-            } else {
-                WRITELOG("Connection error: can't allocate redis context\n");
-            }
-            exit(EXIT_FAILURE);
+                if (ofpsvr_redis) {
+                        WRITELOG("Connection error: %s\n",
+                                 ofpsvr_redis->errstr);
+                        redisFree(ofpsvr_redis);
+                } else {
+                        WRITELOG
+                            ("Connection error: can't allocate redis context\n");
+                }
+                exit(EXIT_FAILURE);
         }
 }
-        
+
 void substantiate()
 {
         MYSQL my;
@@ -140,42 +142,43 @@ char *ofpsvr_timestr(long now)
 }
 
 // Remember to free(random_bytes)
-unsigned char *random_bytes(int length) {
-    unsigned char *random_bytes = NULL;
+unsigned char *random_bytes(int length)
+{
+        unsigned char *random_bytes = NULL;
 
-    random_bytes = malloc((size_t)length + 1);
-    if (! random_bytes) {
-        WRITELOG("could not allocate space for random_bytes...\n");
-        exit(EXIT_FAILURE);
-    }
+        random_bytes = malloc((size_t) length + 1);
+        if (!random_bytes) {
+                WRITELOG("could not allocate space for random_bytes...\n");
+                exit(EXIT_FAILURE);
+        }
 
-    if (! RAND_bytes(random_bytes, length)) {
-        WRITELOG("could not get random bytes...\n");
-        exit(EXIT_FAILURE);
-    }
+        if (!RAND_bytes(random_bytes, length)) {
+                WRITELOG("could not get random bytes...\n");
+                exit(EXIT_FAILURE);
+        }
 
-    *(random_bytes + length) = '\0';
-    return random_bytes;
+        *(random_bytes + length) = '\0';
+        return random_bytes;
 }
 
 // Remember to free(buff)
 char *base64(const unsigned char *input, int length)
 {
-  BIO *bmem, *b64;
-  BUF_MEM *bptr;
+        BIO *bmem, *b64;
+        BUF_MEM *bptr;
 
-  b64 = BIO_new(BIO_f_base64());
-  bmem = BIO_new(BIO_s_mem());
-  b64 = BIO_push(b64, bmem);
-  BIO_write(b64, input, length);
-  BIO_flush(b64);
-  BIO_get_mem_ptr(b64, &bptr);
+        b64 = BIO_new(BIO_f_base64());
+        bmem = BIO_new(BIO_s_mem());
+        b64 = BIO_push(b64, bmem);
+        BIO_write(b64, input, length);
+        BIO_flush(b64);
+        BIO_get_mem_ptr(b64, &bptr);
 
-  char *buff = (char *)malloc(bptr->length);
-  memcpy(buff, bptr->data, bptr->length - 1);
-  buff[bptr->length - 1] = 0;
+        char *buff = (char *)malloc(bptr->length);
+        memcpy(buff, bptr->data, bptr->length - 1);
+        buff[bptr->length - 1] = 0;
 
-  BIO_free_all(b64);
+        BIO_free_all(b64);
 
-  return buff;
+        return buff;
 }

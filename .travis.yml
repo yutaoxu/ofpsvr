@@ -1,0 +1,62 @@
+language: c
+
+os:
+  - linux
+
+compiler:
+  - gcc
+
+before_install:
+  - lsb_release -a
+  - sudo apt-get install -y libmysqlclient-dev
+  - sudo apt-get install -y libssl-dev
+  - sudo apt-get install -y check lcov
+  - sudo apt-get install -y libgnutls-dev
+  - sudo apt-get install -y texinfo
+  - gem install coveralls-lcov
+  - cd /tmp
+  - wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz
+  - tar xzf autoconf-2.69.tar.gz
+  - cd autoconf-2.69
+  - ./configure
+  - make
+  - sudo make install
+  - wget http://ftp.gnu.org/gnu/automake/automake-1.14.1.tar.gz
+  - tar xzf automake-1.14.1.tar.gz
+  - cd automake-1.14.1
+  - ./configure
+  - make
+  - sudo make install
+  - $CC --version
+  - autoconf --version
+  - automake --version
+  - ls /usr/share/aclocal
+  - sudo mkdir -p /usr/local/share/aclocal
+  - sudo ln -s /usr/share/aclocal/* /usr/local/share/aclocal
+
+script:
+  - cd $TRAVIS_BUILD_DIR
+  - sh autogen.sh
+  - ./configure --with-gcov --enable-debug
+  - make
+  - make check
+  - lcov --compat-libtool --directory . --capture --output-file coverage.info
+  - sed -i.bak 's/ofpsvr\/test\/test/ofpsvr\/test/g' coverage.info
+  - coveralls-lcov coverage.info
+
+after_success:
+  - cd $TRAVIS_BUILD_DIR
+  - make clean
+  - make distclean
+  - git clean -xdf
+  - git check-ignore -v *
+  - git status
+  - export OFPSVR_NIGHT=`./scripts/night`
+  - mkdir $TRAVIS_BUILD_DIR/tmp
+  - echo $TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT
+  - mkdir $TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT
+  - sh autogen.sh
+  - ./configure --prefix=$TRAVIS_BUILD_DIR/tmp/$OFPSVR_NIGHT
+  - make
+  - make check
+  - make install

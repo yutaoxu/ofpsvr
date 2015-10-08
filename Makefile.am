@@ -16,9 +16,9 @@ bin_PROGRAMS           = ofpsvr
 ofpsvr_CFLAGS          = $(AM_CFLAGS)
 ofpsvr_LDADD           = $(top_srcdir)/deps/hiredis/libhiredis.a              \
                          $(top_srcdir)/deps/libmicrohttpd/src/microhttpd/.libs/libmicrohttpd.a
-ofpsvr_SOURCES         = main.c                                               \
-                         handler.c                                            \
-                         utils.c                                              \
-                         errors.c                                             \
-                         regenerate.c                                         \
-                         favicon.c
+ofpsvr_SOURCES         = src/main.c                                           \
+                         src/handler.c                                        \
+                         src/utils.c                                          \
+                         src/errors.c                                         \
+                         src/regenerate.c                                     \
+                         src/favicon.c

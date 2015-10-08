@@ -1,12 +1,21 @@
-<p align="center"><a href="http://www.ofpsvr.com"><img src="https://raw.githubusercontent.com/pmq20/ofpsvr-static/master/img/index.png" alt="OF P.S.V.R" /></a></p>
+# OF P.S.V.R
 
-<p align="center">
-<a href="https://travis-ci.org/pmq20/ofpsvr"><img src="https://img.shields.io/travis/pmq20/ofpsvr.svg?style=flat-square" alt="Build status"></a>
-<a href="https://coveralls.io/r/pmq20/ofpsvr?branch=master"><img src="https://img.shields.io/coveralls/pmq20/ofpsvr.svg?style=flat-square" alt="Test coverage"></a>
-<a href="https://www.gittip.com/pmq20/"><img src="https://img.shields.io/gittip/pmq20.svg?style=flat-square" alt="Gittip"></a>
-<a href="https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE"><img src="http://img.shields.io/badge/license-GPLv3-blue.svg" alt="License"></a>
-<a href="http://www.ofpsvr.com"><img src="https://img.shields.io/badge/made%20with-%3C3-red.svg" alt="Made with love"></a>
-</p>
+[![Build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
+[![Gittip][gittip-image]][gittip-url]
+[![License][license-image]][license-url]
+[![Made with love][love-image]][love-url]
+
+[travis-image]: https://img.shields.io/travis/pmq20/ofpsvr.svg?style=flat-square
+[travis-url]: https://travis-ci.org/pmq20/ofpsvr
+[coveralls-image]: https://img.shields.io/coveralls/pmq20/ofpsvr.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/pmq20/ofpsvr?branch=master
+[gittip-image]: https://img.shields.io/gittip/pmq20.svg?style=flat-square
+[gittip-url]: https://www.gittip.com/pmq20/
+[license-image]: http://img.shields.io/badge/license-GPLv3-blue.svg
+[license-url]: https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE
+[love-image]: https://img.shields.io/badge/made%20with-%3C3-red.svg
+[love-url]: http://www.ofpsvr.com
 
 This is the source code of [OF P.S.V.R](http://www.ofpsvr.com),
 the personal website of P.S.V.R

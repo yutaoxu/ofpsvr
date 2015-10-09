@@ -10,8 +10,8 @@
 [travis-url]: https://travis-ci.org/pmq20/ofpsvr
 [coveralls-image]: https://img.shields.io/coveralls/pmq20/ofpsvr.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/pmq20/ofpsvr?branch=master
-[gittip-image]: https://img.shields.io/gittip/pmq20.svg?style=flat-square
-[gittip-url]: https://www.gittip.com/pmq20/
+[gittip-image]: https://img.shields.io/gittip/P.S.V.R.svg?style=flat-square
+[gittip-url]: https://www.gittip.com/P.S.V.R/
 [license-image]: http://img.shields.io/badge/license-GPLv3-blue.svg
 [license-url]: https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE
 [love-image]: https://img.shields.io/badge/made%20with-%3C3-red.svg

@@ -12,7 +12,7 @@
 [coveralls-url]: https://coveralls.io/r/pmq20/ofpsvr?branch=master
 [gittip-image]: https://img.shields.io/gittip/P.S.V.R.svg?style=flat-square
 [gittip-url]: https://www.gittip.com/P.S.V.R/
-[license-image]: http://img.shields.io/badge/license-GPLv3-blue.svg
+[license-image]: http://img.shields.io/badge/license-GPLv3-grey.svg
 [license-url]: https://raw.githubusercontent.com/pmq20/ofpsvr/master/LICENSE
 [love-image]: https://img.shields.io/badge/made%20with-%3C3-red.svg
 [love-url]: http://www.ofpsvr.com

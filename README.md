@@ -1,14 +1,7 @@
-<p align="center"><img src="https://raw.githubusercontent.com/pmq20/ofpsvr/master/public/img/index.png" /></p>
+## OF P.S.V.R
 
-<p align="center">P.S.V.R 的软件实验室</p>
-
-<p align="center">http://www.ofpsvr.com</p>
- 
-## 状态
-
-[![持续集成服务](https://travis-ci.org/pmq20/ofpsvr.svg?branch=master)](https://travis-ci.org/pmq20/ofpsvr)
-[![文档生成](https://readthedocs.org/projects/ofpsvr/badge/?version=latest)](http://ofpsvr.readthedocs.org/zh_CN/latest/)
-[![测试覆盖率](https://coveralls.io/repos/pmq20/ofpsvr/badge.png)](https://coveralls.io/r/pmq20/ofpsvr)
+[![持续集成服务](https://travis-ci.org/pmq20/ofpsvr.c.svg?branch=master)](https://travis-ci.org/pmq20/ofpsvr.c)
+[![测试覆盖率](https://coveralls.io/repos/pmq20/ofpsvr.c/badge.png)](https://coveralls.io/r/pmq20/ofpsvr.c)
 
 ## 系统组件
 

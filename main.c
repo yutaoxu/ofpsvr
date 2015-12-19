@@ -132,7 +132,7 @@ int main(int argc, const char *argv[])
         size_t sz;
         cache_size = 0;
         cache_size_silent = 1;
-        
+
         asset_host = getenv("OFPSVR_ASSET_HOST");
         if (NULL == asset_host)
                 asset_host = "";
@@ -371,7 +371,7 @@ int main(int argc, const char *argv[])
         assert(response_500);
         assert(response_index);
         assert(response_favicon);
-        
+
         mysql_free_result(res_ptr);
         mysql_close(&my);
 
